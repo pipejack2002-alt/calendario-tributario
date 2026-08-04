@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Crear cuenta - TributoApp S.A.S.</title>
+  
+  <!-- Favicon e Identidad de Pestaña -->
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+
   <style>
     :root {
       --primary: #0f172a;
@@ -62,12 +66,15 @@
       text-decoration: none;
     }
 
-    .brand-logo span.icon {
+    /* Estilo para el Logo en Imagen */
+    .brand-logo img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
       background: rgba(16, 185, 129, 0.15);
       border: 1px solid rgba(16, 185, 129, 0.3);
-      padding: 6px 10px;
+      padding: 4px;
       border-radius: 8px;
-      font-size: 1.1rem;
     }
 
     .hero-text h2 {
@@ -257,7 +264,7 @@
     <!-- PANEL IZQUIERDO: MARKETING & PROPUESTA DE VALOR -->
     <div class="info-panel">
       <a href="index.html" class="brand-logo">
-        <span class="icon">📊</span> TributoApp S.A.S.
+        <img src="assets/img/favicon.png" alt="TributoApp Logo"> TributoApp S.A.S.
       </a>
 
       <div class="hero-text">

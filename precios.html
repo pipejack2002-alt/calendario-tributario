@@ -67,12 +67,14 @@
       text-decoration: none;
     }
 
-    .brand-logo span.icon {
+    .brand-logo img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
       background: rgba(16, 185, 129, 0.15);
       border: 1px solid rgba(16, 185, 129, 0.3);
-      padding: 6px 10px;
+      padding: 4px;
       border-radius: 8px;
-      font-size: 1.1rem;
     }
 
     .nav-links {
@@ -397,11 +399,11 @@
   <!-- HEADER / NAVBAR -->
   <header class="navbar">
     <div class="nav-container">
-      <a href="dashboard.html" class="brand-logo">
-        <span class="icon">📊</span> TributoApp S.A.S.
+      <a href="index.html" class="brand-logo">
+        <img src="assets/img/favicon.png" alt="TributoApp Logo"> TributoApp S.A.S.
       </a>
       <nav class="nav-links" id="nav-links">
-        <a href="dashboard.html" class="nav-link">Consulta</a>
+        <!-- Se cargará dinámicamente mediante JavaScript según la sesión -->
         <a href="precios.html" class="nav-link active">Precios</a>
       </nav>
     </div>
@@ -452,7 +454,6 @@
       </div>
       <div class="footer-col">
         <h4>Navegación</h4>
-        <a href="dashboard.html">Consulta de Vencimientos</a>
         <a href="precios.html">Planes y Tarifas</a>
       </div>
       <div class="footer-col">
@@ -535,47 +536,73 @@
               <div class="plan-nombre">Plan Básico</div>
               <div class="plan-sub">Para contadores independientes</div>
               <div class="plan-precio-box">
-                <span class="plan-precio">$29.000</span>
-                <span class="plan-frecuencia">COP / mes</span>
+                <span class="plan-precio">$14.900</span>
+                <span class="plan-frecuencia">COP / Mensual</span>
               </div>
               <ul class="plan-features">
-                <li>Consulta ilimitada de vencimientos</li>
-                <li>Filtros por tipo de contribuyente</li>
-                <li>Soporte por correo</li>
+                <li>Consulta de calendario tributario nacional</li>
+                <li>Filtros dinámicos por NIT e impuesto</li>
+                <li>Actualizaciones normativas automáticas</li>
+                <li>Soporte técnico directo</li>
               </ul>
             </div>
-            <button class="btn-plan" onclick="location.href='registro.html?plan=basico'">Seleccionar Básico</button>
+            <button class="btn-plan" onclick="location.href='registro.html?plan=basico'">Elegir Plan</button>
           </div>
 
           <div class="plan-card destacado">
-            <span class="badge-popular">Más Recomendado</span>
+            <span class="badge-popular">Más Popular</span>
             <div>
-              <div class="plan-nombre">Plan Profesional</div>
-              <div class="plan-sub">Ideal para despachos contables</div>
+              <div class="plan-nombre">Profesional</div>
+              <div class="plan-sub">Acceso completo a la plataforma</div>
               <div class="plan-precio-box">
-                <span class="plan-precio">$59.000</span>
-                <span class="plan-frecuencia">COP / mes</span>
+                <span class="plan-precio">$24.900</span>
+                <span class="plan-frecuencia">COP / Mensual</span>
               </div>
               <ul class="plan-features">
-                <li>Todo lo del plan Básico</li>
-                <li>Alertas tempranas vía e-mail</li>
-                <li>Múltiples perfiles de clientes</li>
-                <li>Soporte prioritario por WhatsApp</li>
+                <li>Consulta de calendario tributario nacional</li>
+                <li>Filtros dinámicos por NIT e impuesto</li>
+                <li>Actualizaciones normativas automáticas</li>
+                <li>Soporte técnico directo</li>
               </ul>
             </div>
-            <button class="btn-plan btn-accent" onclick="location.href='registro.html?plan=pro'">Elegir Plan Pro</button>
+            <button class="btn-plan btn-accent" onclick="location.href='registro.html?plan=pro'">Elegir Plan</button>
+          </div>
+
+          <div class="plan-card">
+            <div>
+              <div class="plan-nombre">Empresarial</div>
+              <div class="plan-sub">Acceso completo a la plataforma</div>
+              <div class="plan-precio-box">
+                <span class="plan-precio">$39.900</span>
+                <span class="plan-frecuencia">COP / Mensual</span>
+              </div>
+              <ul class="plan-features">
+                <li>Consulta de calendario tributario nacional</li>
+                <li>Filtros dinámicos por NIT e impuesto</li>
+                <li>Actualizaciones normativas automáticas</li>
+                <li>Soporte técnico directo</li>
+              </ul>
+            </div>
+            <button class="btn-plan" onclick="location.href='registro.html` + `?plan=empresarial'">Elegir Plan</button>
           </div>
         `;
       }
     }
 
-    // Renderizar opción Admin y Botón de Cerrar Sesión en la Navegación
+    // Renderizar navegación dinámica según el estado de la sesión de Supabase
     async function renderizarNavegacion() {
       try {
         const { data: { session } } = await supabaseClient.auth.getSession();
         const nav = document.getElementById('nav-links');
+        if (!nav) return;
 
-        if (session && nav) {
+        nav.innerHTML = ''; // Limpiar enlaces estáticos previos
+
+        if (session) {
+          // Si el usuario está autenticado, mostrar Consulta, Precios, Admin (si aplica) y Cerrar Sesión
+          nav.innerHTML += `<a href="dashboard.html" class="nav-link">Consulta</a>`;
+          nav.innerHTML += `<a href="precios.html" class="nav-link active">Precios</a>`;
+
           const { data: perfil } = await supabaseClient
             .from('perfiles')
             .select('rol')
@@ -598,9 +625,24 @@
             window.location.href = 'index.html';
           });
           nav.appendChild(logoutBtn);
+
+        } else {
+          // Si NO ha iniciado sesión, mostrar Precios + Iniciar Sesión (login.html) y Crear Cuenta (registro.html)
+          nav.innerHTML += `<a href="precios.html" class="nav-link active">Precios</a>`;
+          nav.innerHTML += `<a href="login.html" class="nav-link">Iniciar Sesión</a>`;
+          nav.innerHTML += `<a href="registro.html" class="nav-link" style="color: var(--accent); font-weight: 700;">Crear Cuenta</a>`;
         }
+
       } catch (err) {
         console.log("Sesión no detectada o error al cargar perfil en precios:", err);
+        const nav = document.getElementById('nav-links');
+        if (nav) {
+          nav.innerHTML = `
+            <a href="precios.html" class="nav-link active">Precios</a>
+            <a href="login.html" class="nav-link">Iniciar Sesión</a>
+            <a href="registro.html" class="nav-link" style="color: var(--accent); font-weight: 700;">Crear Cuenta</a>
+          `;
+        }
       }
     }
 

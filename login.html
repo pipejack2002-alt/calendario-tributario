@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Iniciar Sesión | TributoApp S.A.S. - Calendario Tributario</title>
+  
+  <!-- Favicon e Identidad de Pestaña -->
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+
   <style>
     :root {
       --primary: #0f172a;
@@ -62,12 +66,15 @@
       text-decoration: none;
     }
 
-    .brand-logo span.icon {
+    /* Estilo para el Logo en Imagen */
+    .brand-logo img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
       background: rgba(16, 185, 129, 0.15);
       border: 1px solid rgba(16, 185, 129, 0.3);
-      padding: 6px 10px;
+      padding: 4px;
       border-radius: 8px;
-      font-size: 1.1rem;
     }
 
     .hero-text h2 {
@@ -174,6 +181,25 @@
       box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
     }
 
+    .forgot-password-container {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: -0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .forgot-password {
+      font-size: 0.825rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .forgot-password:hover {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+
     .btn-submit {
       width: 100%;
       background: var(--accent);
@@ -257,7 +283,7 @@
     <!-- PANEL IZQUIERDO: MARKETING & PROPUESTA DE VALOR -->
     <div class="info-panel">
       <a href="index.html" class="brand-logo">
-        <span class="icon">📊</span> TributoApp S.A.S.
+        <img src="assets/img/favicon.png" alt="TributoApp Logo"> TributoApp S.A.S.
       </a>
 
       <div class="hero-text">
@@ -294,6 +320,10 @@
           <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
         </div>
 
+        <div class="forgot-password-container">
+          <a href="#" id="link-recuperar" class="forgot-password">¿Olvidaste tu contraseña?</a>
+        </div>
+
         <button type="submit" class="btn-submit" id="btn-entrar">Iniciar Sesión</button>
       </form>
 
@@ -314,7 +344,9 @@
     const form = document.getElementById('form-login');
     const mensaje = document.getElementById('mensaje');
     const btnEntrar = document.getElementById('btn-entrar');
+    const linkRecuperar = document.getElementById('link-recuperar');
 
+    // Lógica de Inicio de Sesión
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       
@@ -342,6 +374,34 @@
       setTimeout(() => {
         window.location.href = "dashboard.html";
       }, 500);
+    });
+
+    // Lógica de Recuperación de Contraseña
+    linkRecuperar.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+
+      if (!email) {
+        mensaje.style.color = "#e53e3e";
+        mensaje.textContent = "Por favor, ingresa tu correo electrónico arriba para recuperar la contraseña.";
+        document.getElementById('email').focus();
+        return;
+      }
+
+      mensaje.style.color = "#1e2a5a";
+      mensaje.textContent = "Enviando enlace de recuperación...";
+
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + "/actualizar-password.html",
+      });
+
+      if (error) {
+        mensaje.style.color = "#e53e3e";
+        mensaje.textContent = "Error al enviar el correo: " + error.message;
+      } else {
+        mensaje.style.color = "#10b981";
+        mensaje.textContent = "¡Correo enviado! Revisa tu bandeja de entrada para restablecer la contraseña.";
+      }
     });
   </script>
 </body>
