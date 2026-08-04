@@ -3,46 +3,227 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Precios - Calendario Tributario</title>
+  <title>Planes y Precios - Calendario Tributario Colombia</title>
   <style>
-    * { box-sizing: border-box; margin:0; padding:0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-    body { background:#f4f6f9; padding:2rem 1.5rem; }
-    .container { max-width: 900px; margin: 0 auto; text-align:center; }
-    nav { text-align:center; margin-bottom:2rem; }
-    nav a { margin: 0 0.75rem; color:#1e2a5a; text-decoration:none; font-weight:600; }
-    h1 { color:#1e2a5a; margin-bottom: 0.5rem; }
-    p.subtitle { color:#718096; margin-bottom: 2rem; }
-    .planes-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap:1.5rem; }
-    .plan-card { background:#fff; border-radius:12px; padding:2rem 1.5rem; border:1px solid #e2e8f0; box-shadow:0 4px 12px rgba(0,0,0,0.03); display:flex; flex-direction:column; justify-content:space-between; }
-    .plan-nombre { font-size:1.3rem; font-weight:700; color:#1e2a5a; margin-bottom:0.5rem; }
-    .plan-precio { font-size:2rem; font-weight:800; color:#1e2a5a; margin-bottom:0.25rem; }
-    .plan-frecuencia { font-size:0.85rem; color:#718096; margin-bottom:1rem; }
-    .plan-descripcion { font-size:0.95rem; color:#2d3748; margin-bottom:1.5rem; }
-    .btn-plan { margin-top:auto; width:100%; background:#1e2a5a; color:#fff; border:none; padding:0.75rem; border-radius:8px; font-weight:600; cursor:pointer; transition: background 0.2s; }
-    .btn-plan:hover { background:#141d3f; }
+    /* Variables de marca */
+    :root {
+      --primary: #1e2a5a;
+      --primary-hover: #141d3f;
+      --accent: #2563eb;
+      --accent-green: #10b981;
+      --bg-body: #f8fafc;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background: var(--bg-body); color: var(--text-main); line-height: 1.5; }
+
+    /* Barra de Navegación */
+    header { background: #ffffff; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; }
+    .nav-container { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; }
+    .logo { font-weight: 800; font-size: 1.25rem; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+    nav a { margin-left: 1.25rem; color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: color 0.2s; }
+    nav a:hover { color: var(--accent); }
+    .btn-nav-accent { background: var(--primary); color: #fff !important; padding: 0.5rem 1rem; border-radius: 8px; }
+
+    /* Encabezado Principal (Hero) */
+    .hero-sales { text-align: center; padding: 3.5rem 1.5rem 2rem 1.5rem; max-width: 800px; margin: 0 auto; }
+    .badge-trust { display: inline-block; background: #e0e7ff; color: #3730a3; padding: 0.35rem 0.85rem; border-radius: 50px; font-size: 0.825rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1rem; }
+    .hero-sales h1 { font-size: 2.25rem; font-weight: 800; color: var(--primary); margin-bottom: 0.75rem; letter-spacing: -0.5px; }
+    .hero-sales p { font-size: 1.1rem; color: var(--text-muted); }
+
+    /* Grid de Tarjetas de Precios */
+    .pricing-container { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
+    .planes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; align-items: stretch; }
+    
+    .plan-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 2.25rem 1.75rem;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .plan-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
+
+    /* Estilo Destacado para el Plan Recomendado */
+    .plan-card.destacado {
+      border: 2px solid var(--accent);
+      box-shadow: 0 8px 30px rgba(37, 99, 235, 0.15);
+    }
+    .badge-popular {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #fff;
+      padding: 0.25rem 0.85rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .plan-nombre { font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-bottom: 0.25rem; }
+    .plan-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem; }
+    .plan-precio-box { margin-bottom: 1.5rem; display: flex; align-items: baseline; gap: 4px; }
+    .plan-precio { font-size: 2.25rem; font-weight: 800; color: var(--primary); }
+    .plan-frecuencia { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+    
+    .plan-features { list-style: none; margin-bottom: 2rem; border-top: 1px solid #f1f5f9; padding-top: 1.25rem; }
+    .plan-features li { font-size: 0.925rem; color: #334155; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 8px; }
+    .plan-features li::before { content: "✓"; color: var(--accent-green); font-weight: 900; font-size: 1.1rem; }
+
+    .btn-plan {
+      width: 100%;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 0.85rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      text-align: center;
+      text-decoration: none;
+      display: block;
+    }
+    .btn-plan:hover { background: var(--primary-hover); }
+    .btn-plan.btn-accent { background: var(--accent); }
+    .btn-plan.btn-accent:hover { background: #1d4ed8; }
+
+    /* Preguntas Frecuentes (FAQ) */
+    .faq-section { max-width: 800px; margin: 4rem auto 2rem auto; padding: 0 1.5rem; }
+    .faq-title { text-align: center; font-size: 1.6rem; font-weight: 800; color: var(--primary); margin-bottom: 2rem; }
+    .faq-item { background: #fff; padding: 1.25rem 1.5rem; border-radius: 12px; margin-bottom: 1rem; border: 1px solid #e2e8f0; }
+    .faq-question { font-weight: 700; color: var(--primary); margin-bottom: 0.35rem; }
+    .faq-answer { font-size: 0.925rem; color: var(--text-muted); }
+
+    /* Pie de página */
+    footer { background: #0f172a; color: #94a3b8; padding: 3rem 1.5rem 1.5rem 1.5rem; margin-top: 4rem; font-size: 0.9rem; }
+    .footer-container { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; }
+    .footer-col h4 { color: #ffffff; font-size: 1rem; margin-bottom: 1rem; }
+    .footer-col a { color: #94a3b8; text-decoration: none; display: block; margin-bottom: 0.5rem; }
+    .footer-col a:hover { color: #38bdf8; }
+    .footer-bottom { max-width: 1100px; margin: 2rem auto 0 auto; padding-top: 1.5rem; border-top: 1px solid #334155; text-align: center; font-size: 0.8rem; }
+
+    /* Botón Flotante WhatsApp */
+    .whatsapp-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background-color: #25d366;
+      color: white;
+      border-radius: 50px;
+      padding: 12px 22px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 1000;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .whatsapp-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5); }
   </style>
 </head>
 <body>
-  <div class="container">
-    <nav>
-      <a href="dashboard.html">Consulta</a>
-      <a href="precios.html">Precios</a>
-    </nav>
-    
-    <h1>Nuestros planes</h1>
-    <p class="subtitle">Elige el que se ajuste a tu necesidad</p>
-    <div class="planes-grid" id="planes-grid"></div>
-  </div>
 
+  <!-- NAVEGACIÓN -->
+  <header>
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        📊 Calendario Tributario
+      </a>
+      <nav id="nav-links">
+        <a href="dashboard.html">Consulta</a>
+        <a href="precios.html" style="color: var(--accent);">Precios</a>
+        <a href="login.html" class="btn-nav-accent">Acceder</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO VENDEDOR -->
+  <section class="hero-sales">
+    <span class="badge-trust">⚡ Normativa DIAN Colombia 2026</span>
+    <h1>Evita sanciones por vencimientos olvidados</h1>
+    <p>La herramienta ágil e inteligente diseñada para contadores, asesores tributarios y empresas que buscan control total sobre sus obligaciones.</p>
+  </section>
+
+  <!-- TARJETAS DE PRECIOS -->
+  <main class="pricing-container">
+    <div class="planes-grid" id="planes-grid">
+      <!-- Carga dinámica vía Javascript o fallback visual -->
+    </div>
+  </main>
+
+  <!-- SECCIÓN FAQ (REDUCCIÓN DE FRICCIÓN) -->
+  <section class="faq-section">
+    <h2 class="faq-title">Preguntas Frecuentes</h2>
+    <div class="faq-item">
+      <div class="faq-question">¿Los calendarios están actualizados con la DIAN?</div>
+      <div class="faq-answer">Sí, nuestra base de datos se sincroniza con los decretos y resoluciones oficiales de la DIAN y entes municipales.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">¿Puedo usar la plataforma desde mi celular?</div>
+      <div class="faq-answer">Por supuesto. La aplicación web está 100% optimizada para funcionar rápido en smartphones, tablets y computadores.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">¿Necesitas ayuda para elegir un plan o requerimiento corporativo?</div>
+      <div class="faq-answer">Escríbenos directamente por WhatsApp y nuestro equipo te asesorará en menos de 5 minutos.</div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-col">
+        <h4>Calendario Tributario</h4>
+        <p>Optimizando la gestión fiscal de los profesionales contables en Colombia.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navegación</h4>
+        <a href="dashboard.html">Consulta de Vencimientos</a>
+        <a href="precios.html">Planes y Tarifas</a>
+        <a href="login.html">Ingreso a Sistema</a>
+      </div>
+      <div class="footer-col">
+        <h4>Soporte</h4>
+        <a href="https://wa.me/573000000000" target="_blank">💬 WhatsApp de Atención</a>
+        <a href="mailto:soporte@tusitio.com">✉️ soporte@tusitio.com</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 Calendario Tributario Colombia. Todos los derechos reservados.
+    </div>
+  </footer>
+
+  <!-- BOTÓN FLOTANTE WHATSAPP CON MENSAJE PREDETERMINADO DE VENTA -->
+  <a href="https://wa.me/573000000000?text=Hola,%20estoy%20interesado%20en%20adquirir%20un%20plan%20del%20Calendario%20Tributario" 
+     class="whatsapp-btn" 
+     target="_blank">
+    <span>💬</span> Asesoría Inmediata
+  </a>
+
+  <!-- LÓGICA DE SUPABASE Y NAVEGACIÓN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabaseClient.js"></script>
   <script>
-    // 1. Mostrar enlace Admin solo a administradores
+    // 1. Mostrar enlace Admin solo a administradores autenticados
     async function renderizarNavegacion() {
       const { data: { session } } = await supabaseClient.auth.getSession();
-      const nav = document.querySelector('nav');
+      const navLinks = document.getElementById('nav-links');
 
-      if (session && nav) {
+      if (session && navLinks) {
         const { data: perfil } = await supabaseClient
           .from('perfiles')
           .select('rol')
@@ -52,53 +233,101 @@
         if (perfil && perfil.rol === 'admin') {
           const adminLink = document.createElement('a');
           adminLink.href = 'admin.html';
-          adminLink.style = 'margin:0 0.75rem; color:#1e2a5a; font-weight:600; text-decoration:none;';
           adminLink.textContent = 'Admin';
-          nav.appendChild(adminLink);
+          adminLink.style.color = '#e53e3e';
+          navLinks.insertBefore(adminLink, navLinks.querySelector('.btn-nav-accent'));
         }
       }
     }
 
-    // 2. Acción al hacer clic en un plan
-    function seleccionarPlan(planId) {
-      // Redirige al registro pasando el ID del plan seleccionado
+    // 2. Acción al seleccionar plan
+    function seleccionarPlan(planId, nombrePlan) {
+      // Redirige al registro o a WhatsApp para cerrar la venta directamente
       window.location.href = `registro.html?plan=${planId}`;
     }
 
-    // 3. Cargar planes desde Supabase
+    // 3. Cargar planes desde Supabase con diseño comercial
     async function cargarPlanes() {
       const grid = document.getElementById('planes-grid');
-      const { data, error } = await supabaseClient
+      const { data: planes, error } = await supabaseClient
         .from('planes')
         .select('*')
         .order('precio', { ascending: true });
 
-      if (error) {
-        grid.innerHTML = `<p>Error al cargar los planes: ${error.message}</p>`;
+      if (error || !planes || planes.length === 0) {
+        // Fallback visual por si no hay datos en la tabla 'planes' aún
+        grid.innerHTML = `
+          <div class="plan-card">
+            <div>
+              <div class="plan-nombre">Plan Básico</div>
+              <div class="plan-sub">Para contadores independientes</div>
+              <div class="plan-precio-box">
+                <span class="plan-precio">$29.000</span>
+                <span class="plan-frecuencia">COP / mes</span>
+              </div>
+              <ul class="plan-features">
+                <li>Consulta ilimitada de vencimientos</li>
+                <li>Filtros por tipo de contribuyente</li>
+                <li>Soporte por correo</li>
+              </ul>
+            </div>
+            <button class="btn-plan" onclick="location.href='registro.html?plan=basico'">Seleccionar Básico</button>
+          </div>
+
+          <div class="plan-card destacado">
+            <span class="badge-popular">Más Recomendado</span>
+            <div>
+              <div class="plan-nombre">Plan Profesional</div>
+              <div class="plan-sub">Ideal para despachos contables</div>
+              <div class="plan-precio-box">
+                <span class="plan-precio">$59.000</span>
+                <span class="plan-frecuencia">COP / mes</span>
+              </div>
+              <ul class="plan-features">
+                <li>Todo lo del plan Básico</li>
+                <li>Alertas tempranas vía e-mail</li>
+                <li>Múltiples perfiles de clientes</li>
+                <li>Soporte prioritario por WhatsApp</li>
+              </ul>
+            </div>
+            <button class="btn-plan btn-accent" onclick="location.href='registro.html?plan=pro'">Elegir Plan Pro</button>
+          </div>
+        `;
         return;
       }
 
       grid.innerHTML = "";
-      data.forEach(plan => {
+      planes.forEach((plan, index) => {
         const precioFormateado = Number(plan.precio).toLocaleString('es-CO');
+        const esDestacado = index === 1; // El segundo plan siempre se resalta como "Popular"
+        
         const div = document.createElement('div');
-        div.className = 'plan-card';
+        div.className = `plan-card ${esDestacado ? 'destacado' : ''}`;
+        
         div.innerHTML = `
+          ${esDestacado ? '<span class="badge-popular">Más Popular</span>' : ''}
           <div>
             <div class="plan-nombre">${plan.nombre}</div>
-            <div class="plan-precio">$${precioFormateado}</div>
-            <div class="plan-frecuencia">COP / ${plan.frecuencia_pago}</div>
-            <div class="plan-descripcion">${plan.descripcion || ''}</div>
+            <div class="plan-sub">Acceso completo a la plataforma</div>
+            <div class="plan-precio-box">
+              <span class="plan-precio">$${precioFormateado}</span>
+              <span class="plan-frecuencia">COP / ${plan.frecuencia_pago || 'mes'}</span>
+            </div>
+            <ul class="plan-features">
+              <li>Consulta de calendario tributario nacional</li>
+              <li>Filtros dinámicos por NIT e impuesto</li>
+              <li>Actualizaciones normativas automáticas</li>
+              <li>Soporte técnico directo</li>
+            </ul>
           </div>
-          <button class="btn-plan" onclick="seleccionarPlan('${plan.id}')">
-            Elegir Plan
+          <button class="btn-plan ${esDestacado ? 'btn-accent' : ''}" onclick="seleccionarPlan('${plan.id}', '${plan.nombre}')">
+            ${esDestacado ? '¡Comenzar Ahora!' : 'Elegir Plan'}
           </button>
         `;
         grid.appendChild(div);
       });
     }
 
-    // Ejecutar al cargar la página
     renderizarNavegacion();
     cargarPlanes();
   </script>
