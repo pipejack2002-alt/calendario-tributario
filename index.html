@@ -3,39 +3,461 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calendario Tributario</title>
-  <!-- Respaldo por si JavaScript no carga de inmediato -->
-  <meta http-equiv="refresh" content="2; url=login.html">
+  
+  <!-- Favicon e Identidad de Pestaña -->
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+  <title>TributoApp S.A.S. | Calendario Tributario Colombia & Cero Sanciones</title>
+
   <style>
+    :root {
+      --primary-navy: #1e2a5a;
+      --primary-hover: #161f42;
+      --accent-green: #10b981;
+      --accent-green-hover: #0e9f6e;
+      --bg-body: #f4f6f9;
+      --text-main: #2d3748;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      background: #f4f6f9;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+    }
+
+    /* --- PANTALLA DE CARGA (VERIFICANDO SESIÓN) --- */
+    #loader {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
-      margin: 0;
-      font-family: system-ui, -apple-system, sans-serif;
-      color: #1e2a5a;
-      font-weight: 600;
+      background: #ffffff;
+    }
+
+    #loader img {
+      height: 70px;
+      margin-bottom: 1rem;
+      animation: pulse 1.5s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(0.98); }
+    }
+
+    /* --- LANDING PAGE (OCULTA POR DEFECTO HASTA VERIFICAR) --- */
+    #landing-content {
+      display: none;
+    }
+
+    /* Navbar / Encabezado */
+    .navbar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.8rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo-img {
+      height: 48px;
+      object-fit: contain;
+    }
+
+    .logo-tagline {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-left: 2px solid var(--border-color);
+      padding-left: 10px;
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      .logo-tagline {
+        display: block;
+      }
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.2rem;
+      align-items: center;
+    }
+
+    .btn-login {
+      text-decoration: none;
+      color: var(--primary-navy);
+      font-weight: 700;
+      padding: 0.5rem 1rem;
+    }
+
+    .btn-cta {
+      background-color: var(--accent-green);
+      color: #ffffff;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 700;
+      transition: background 0.2s ease;
+    }
+
+    .btn-cta:hover {
+      background-color: var(--accent-green-hover);
+    }
+
+    /* Hero Section / Presentación Principal */
+    .hero {
+      background: linear-gradient(135deg, var(--primary-navy) 0%, #0f172a 100%);
+      color: #ffffff;
+      padding: 5rem 1.5rem;
+      text-align: center;
+    }
+
+    .hero-container {
+      max-width: 850px;
+      margin: 0 auto;
+    }
+
+    .badge-colombia {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-green);
+      border: 1px solid var(--accent-green);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: inline-block;
+    }
+
+    .hero-title {
+      font-size: 2.8rem;
+      font-weight: 800;
+      margin: 1.5rem 0 1rem 0;
+      line-height: 1.25;
+    }
+
+    .highlight {
+      color: var(--accent-green);
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem;
+      color: #94a3b8;
+      margin-bottom: 2.2rem;
+      line-height: 1.5;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-hero-primary {
+      background-color: var(--accent-green);
+      color: #ffffff;
+      padding: 0.8rem 2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.05rem;
+      transition: background 0.2s ease;
+    }
+
+    .btn-hero-primary:hover {
+      background-color: var(--accent-green-hover);
+    }
+
+    .btn-hero-secondary {
+      border: 2px solid #ffffff;
+      color: #ffffff;
+      padding: 0.8rem 2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.05rem;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .btn-hero-secondary:hover {
+      background-color: #ffffff;
+      color: var(--primary-navy);
+    }
+
+    /* --- SECCIONES DE MARKETING Y VALOR --- */
+    .section-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 4rem 1.5rem;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 2.2rem;
+      color: var(--primary-navy);
+      font-weight: 800;
+      margin-bottom: 2.5rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    .feature-card h3 {
+      color: var(--primary-navy);
+      font-size: 1.3rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .feature-card p {
+      color: var(--text-muted);
+      line-height: 1.6;
+      font-size: 0.98rem;
+    }
+
+    /* Misión y Visión */
+    .about-section {
+      background: #ffffff;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2.5rem;
+    }
+
+    .about-box {
+      background: var(--bg-body);
+      padding: 2.5rem;
+      border-radius: 12px;
+      border-left: 5px solid var(--primary-navy);
+    }
+
+    .about-box.vision {
+      border-left-color: var(--accent-green);
+    }
+
+    .about-box h3 {
+      font-size: 1.5rem;
+      color: var(--primary-navy);
+      margin-bottom: 1rem;
+    }
+
+    .about-box p {
+      color: var(--text-main);
+      line-height: 1.7;
+    }
+
+    /* Pie de página */
+    .footer {
+      background: var(--primary-navy);
+      color: #ffffff;
+      padding: 3rem 1.5rem 1.5rem;
+    }
+
+    .footer-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .footer-col h4 {
+      margin-bottom: 1rem;
+      color: var(--accent-green);
+    }
+
+    .footer-col p, .footer-col a {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.9rem;
+      line-height: 1.8;
+      display: block;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+      padding-top: 1.5rem;
+      color: #64748b;
+      font-size: 0.85rem;
     }
   </style>
 </head>
 <body>
-  <p>Cargando Calendario Tributario...</p>
 
+  <!-- 1. PANTALLA DE CARGA -->
+  <div id="loader">
+    <img src="assets/img/logo.png" alt="TributoApp S.A.S. - Calendario Tributario Colombia">
+    <p style="color: var(--primary-navy); font-weight: 600;">Verificando sesión en TributoApp...</p>
+  </div>
+
+  <!-- 2. CONTENIDO LANDING PAGE -->
+  <div id="landing-content">
+    
+    <!-- Encabezado / Navbar -->
+    <header class="navbar">
+      <div class="nav-container">
+        <a href="index.html" class="logo-wrapper">
+          <img src="assets/img/logo.png" alt="TributoApp S.A.S. Calendario Tributario" class="logo-img">
+          <!-- Eslogan Secundario (Tagline de Claridad junto al logo) -->
+          <span class="logo-tagline">Vencimientos claros, impuestos bajo control.</span>
+        </a>
+        <nav class="nav-links">
+          <a href="#nosotros" class="btn-login" style="font-weight: 600;">Sobre Nosotros</a>
+          <a href="precios.html" class="btn-login" style="font-weight: 600;">Precios</a>
+          <a href="login.html" class="btn-login">Iniciar Sesión</a>
+          <a href="registro.html" class="btn-cta">Probar Gratis</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero Section / Marketing Principal -->
+    <main>
+      <section class="hero">
+        <div class="hero-container">
+          <span class="badge-colombia">🇨🇴 TributoApp S.A.S. — Barranquilla & Colombia</span>
+          
+          <h1 class="hero-title">
+            <!-- Eslogan Principal (Impacto / Hero Directo al Dolor) -->
+            <span class="highlight">Cero sanciones.</span> 100% al día con la DIAN.
+          </h1>
+          
+          <p class="hero-subtitle">
+            Organiza, monitorea y recibe alertas preventivas por el último dígito de tu NIT o cédula. Evita multas e intereses por extemporaneidad con el respaldo de nuestro equipo contable.
+          </p>
+
+          <div class="hero-buttons">
+            <a href="registro.html" class="btn-hero-primary">Comenzar Gratis</a>
+            <a href="precios.html" class="btn-hero-secondary">Ver Planes ($14.900/mes)</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Por qué elegir TributoApp -->
+      <section class="section-container">
+        <h2 class="section-title">¿Por qué TributoApp S.A.S. es tu mejor aliado?</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <h3>📅 Alertas Automatizadas</h3>
+            <p>Sincronización en tiempo real con los decretos de la DIAN y calendarios distritales (ICA, Predial) según tu perfil fiscal.</p>
+          </div>
+          <div class="feature-card">
+            <h3>🛡️ Prevención de Sanciones</h3>
+            <p>Evita pagar la sanción mínima por extemporaneidad ($470.000+ COP). Una alerta a tiempo paga tu suscripción del año completo.</p>
+          </div>
+          <div class="feature-card">
+            <h3>🏢 Respaldo Físico & Profesional</h3>
+            <p>Contamos con profesionales contables y sede de atención presencial en el Barrio El Prado de Barranquilla para tu tranquilidad.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sección Misión y Visión -->
+      <section class="about-section" id="nosotros">
+        <div class="section-container">
+          <h2 class="section-title">Nuestra Empresa</h2>
+          <div class="about-grid">
+            <div class="about-box">
+              <h3>Misión</h3>
+              <p>Somos <strong>TributoApp S.A.S.</strong>, una empresa con sede en Barranquilla, comprometida con acompañar a contribuyentes, independientes, empresas y contadores públicos en el cumplimiento puntual y organizado de sus obligaciones tributarias. A través de nuestra plataforma, combinamos automatización de alertas por último dígito de NIT y análisis de perfil fiscal para evitar sanciones por extemporaneidad.</p>
+            </div>
+            <div class="about-box vision">
+              <h3>Visión</h3>
+              <p>Para el año 2040, ser la plataforma digital líder en gestión de calendario tributario y alertas de cumplimiento fiscal en la región Caribe y Colombia. Nos distinguiremos por la actualización constante frente a las reformas tributarias, la precisión en la información distrital y nacional, y una atención técnica de alta calidad.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Pie de página / Footer -->
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-col">
+          <h4>TributoApp S.A.S.</h4>
+          <p>Calendario Tributario y alertas inteligentes de cumplimiento fiscal en Colombia.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Sede Presencial</h4>
+          <p>CRA 66 #50-154, Barrio El Prado</p>
+          <p>Barranquilla, Atlántico - Colombia</p>
+          <p>Atención: L-V 8:00am - 5:00pm</p>
+        </div>
+        <div class="footer-col">
+          <h4>Navegación</h4>
+          <a href="precios.html">Planes y Precios</a>
+          <a href="login.html">Iniciar Sesión</a>
+          <a href="registro.html">Crear Cuenta</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 TributoApp S.A.S. — Desarrollado para Corporación Universitaria Latinoamericana (CUL).</p>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- SCRIPTS DE SUPABASE Y LÓGICA DE NAVEGACIÓN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabaseClient.js"></script>
   <script>
     (async () => {
-      // 1. Consultar si hay una sesión activa en Supabase
-      const { data: { session } } = await supabaseClient.auth.getSession();
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
 
-      if (session) {
-        // Usuario autenticado -> Redirigir al Dashboard
-        window.location.replace("dashboard.html");
-      } else {
-        // Usuario no autenticado -> Redirigir al Login
-        window.location.replace("login.html");
+        if (session) {
+          window.location.replace("dashboard.html");
+        } else {
+          document.getElementById("loader").style.display = "none";
+          document.getElementById("landing-content").style.display = "block";
+        }
+      } catch (error) {
+        console.error("Error al verificar la sesión:", error);
+        document.getElementById("loader").style.display = "none";
+        document.getElementById("landing-content").style.display = "block";
       }
     })();
   </script>

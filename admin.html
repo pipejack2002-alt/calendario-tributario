@@ -3,31 +3,256 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel de Administrador - Calendario Tributario</title>
+  <title>Panel de Administrador - Calendario Tributario Colombia</title>
+  
+  <!-- Favicon e Identidad de Pestaña -->
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+
   <style>
-    * { box-sizing:border-box; margin:0; padding:0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-    body { background:#f4f6f9; padding:2rem 1.5rem; }
-    .container { max-width: 900px; margin:0 auto; }
-    nav { text-align:center; margin-bottom:1.5rem; }
-    nav a { margin:0 0.75rem; color:#1e2a5a; font-weight:600; text-decoration:none; }
-    .card { background:#fff; border-radius:12px; padding:1.5rem 2rem; margin-bottom:1.5rem; border:1px solid #e2e8f0; }
-    .card-title { font-size:1.15rem; font-weight:700; color:#1e2a5a; margin-bottom:1rem; }
-    .form-grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:1rem; }
-    label { font-size:0.8rem; font-weight:600; color:#718096; }
-    input, select { width:100%; padding:0.6rem; border:1px solid #e2e8f0; border-radius:8px; margin-top:0.3rem; margin-bottom:0.8rem; }
-    button { background:#1e2a5a; color:#fff; border:none; padding:0.7rem 1.5rem; border-radius:8px; font-weight:600; cursor:pointer; }
-    .btn-danger { background:#e53e3e; }
-    .btn-danger:hover { background:#c53030; }
-    #mensaje-form, #mensaje-csv, #mensaje-eliminar { margin-top:0.5rem; font-size:0.9rem; font-weight:600; }
+    :root {
+      --primary: #0f172a;
+      --primary-blue: #1e2a5a;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-green: #10b981;
+      --bg-body: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+    }
+
+    /* --- HEADER / NAVBAR --- */
+    .navbar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.8rem 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo-img {
+      height: 40px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.8rem;
+      align-items: center;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: color 0.2s ease;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .nav-link:hover {
+      color: var(--primary-blue);
+    }
+
+    .nav-link.active {
+      color: var(--primary-blue);
+      font-weight: 700;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 4px;
+    }
+
+    /* --- CONTENEDOR PRINCIPAL --- */
+    .container {
+      max-width: 900px;
+      width: 90%;
+      margin: 2rem auto;
+      flex: 1;
+    }
+
+    .page-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .page-header h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--primary-blue);
+      letter-spacing: -0.5px;
+    }
+
+    .page-header p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+      margin-bottom: 1rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    label {
+      font-size: 0.825rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.7rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.925rem;
+      color: var(--text-main);
+      background-color: #fff;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    button {
+      background: var(--primary-blue);
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.925rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    button:hover {
+      background: #141d3f;
+    }
+
+    .btn-danger {
+      background: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background: var(--danger-hover);
+    }
+
+    code {
+      background: #f1f5f9;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      color: var(--primary-blue);
+    }
+
+    #mensaje-form, #mensaje-csv, #mensaje-eliminar {
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    /* Pie de página */
+    footer {
+      background: var(--primary);
+      color: #94a3b8;
+      padding: 2.5rem 1.5rem 1.5rem 1.5rem;
+      margin-top: auto;
+      font-size: 0.9rem;
+    }
+
+    .footer-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-bottom {
+      max-width: 1100px;
+      margin: 1.5rem auto 0 auto;
+      padding-top: 1rem;
+      border-top: 1px solid #334155;
+      text-align: center;
+      font-size: 0.8rem;
+    }
   </style>
 </head>
 <body>
+
+  <!-- HEADER / NAVBAR -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="dashboard.html">
+        <img src="assets/img/logo.png" alt="Calendario Tributario Colombia" class="logo-img">
+      </a>
+      <nav class="nav-links" id="nav-links">
+        <a href="dashboard.html" class="nav-link">Consulta</a>
+        <a href="precios.html" class="nav-link">Precios</a>
+        <a href="admin.html" class="nav-link active">Admin</a>
+      </nav>
+    </div>
+  </header>
+
   <div class="container">
-    <nav>
-      <a href="dashboard.html">Consulta</a>
-      <a href="precios.html">Precios</a>
-      <a href="admin.html">Admin</a>
-    </nav>
+    <div class="page-header">
+      <h1>Panel de Administración</h1>
+      <p>Gestión y actualización centralizada de obligaciones tributarias.</p>
+    </div>
 
     <!-- 1. Formulario para agregar una sola obligación -->
     <div class="card">
@@ -85,29 +310,47 @@
     <!-- 2. Carga Masiva por CSV con Batching -->
     <div class="card">
       <div class="card-title">Cargar el calendario completo de un nuevo año (CSV)</div>
-      <p style="font-size:0.85rem; color:#718096; margin-bottom:1rem;">
+      <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:1rem;">
         El CSV debe tener exactamente estas columnas en la primera fila:<br>
         <code>tipo_contribuyente,impuesto,periodo,frecuencia,sujeto_activo,grupo_nit,fecha_vencimiento,anio_gravable</code>
       </p>
       <input type="file" id="input-csv" accept=".csv">
-      <br><br>
-      <button id="btn-importar">Importar CSV</button>
+      <div style="margin-top: 1rem;">
+        <button id="btn-importar">Importar CSV</button>
+      </div>
       <p id="mensaje-csv"></p>
     </div>
 
     <!-- 3. Limpieza / Sobrescritura de un Año Gravable -->
-    <div class="card" style="border-left: 4px solid #e53e3e;">
-      <div class="card-title" style="color:#c53030;">Limpiar / Eliminar datos de un año gravable</div>
-      <p style="font-size:0.85rem; color:#718096; margin-bottom:1rem;">
+    <div class="card" style="border-left: 4px solid var(--danger);">
+      <div class="card-title" style="color: var(--danger-hover);">Limpiar / Eliminar datos de un año gravable</div>
+      <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:1rem;">
         Si necesitas resubir un año completo por corregir un error, elimina primero los registros de ese año para evitar duplicados.
       </p>
-      <div style="display:flex; gap:1rem; align-items:center; max-width:400px;">
-        <input type="number" id="input-anio-eliminar" placeholder="Ej: 2027" style="margin:0;">
+      <div style="display:flex; gap:1rem; align-items:center; max-width:450px; flex-wrap:wrap;">
+        <input type="number" id="input-anio-eliminar" placeholder="Ej: 2027" style="margin:0; flex:1;">
         <button id="btn-eliminar-anio" class="btn-danger" style="white-space:nowrap;">Eliminar Año</button>
       </div>
       <p id="mensaje-eliminar"></p>
     </div>
   </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-container">
+      <div>
+        <strong>Calendario Tributario Colombia</strong>
+        <p style="font-size:0.85rem; color:#94a3b8; margin-top:0.25rem;">Panel de control administrativo.</p>
+      </div>
+      <div>
+        <a href="dashboard.html" style="color:#94a3b8; text-decoration:none; margin-right:1rem;">Consulta</a>
+        <a href="precios.html" style="color:#94a3b8; text-decoration:none;">Precios</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 Calendario Tributario Colombia. Todos los derechos reservados.
+    </div>
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -130,10 +373,33 @@
       }
     })();
 
+    // Renderizar opción de Cerrar Sesión en la Navegación de forma dinámica
+    async function renderizarNavegacionAdmin() {
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        const nav = document.getElementById('nav-links');
+
+        if (session && nav) {
+          const logoutBtn = document.createElement('button');
+          logoutBtn.className = 'nav-link';
+          logoutBtn.textContent = 'Cerrar Sesión';
+          logoutBtn.addEventListener('click', async () => {
+            await supabaseClient.auth.signOut();
+            window.location.href = 'index.html';
+          });
+          nav.appendChild(logoutBtn);
+        }
+      } catch (err) {
+        console.log("Error al cargar sesión en navegación admin:", err);
+      }
+    }
+    renderizarNavegacionAdmin();
+
     // 2. Guardar una sola obligación
     document.getElementById('form-obligacion').addEventListener('submit', async (e) => {
       e.preventDefault();
       const mensaje = document.getElementById('mensaje-form');
+      mensaje.style.color = "var(--primary-blue)";
       mensaje.textContent = "Guardando...";
 
       const nuevaFila = {
@@ -150,10 +416,10 @@
       const { error } = await supabaseClient.from('calendario_tributario').insert(nuevaFila);
 
       if (error) { 
-        mensaje.style.color = "red";
+        mensaje.style.color = "var(--danger)";
         mensaje.textContent = "Error: " + error.message; 
       } else { 
-        mensaje.style.color = "green";
+        mensaje.style.color = "var(--accent-green)";
         mensaje.textContent = "¡Obligación guardada correctamente!"; 
         e.target.reset(); 
       }
@@ -165,12 +431,12 @@
       const mensaje = document.getElementById('mensaje-csv');
 
       if (!input.files || input.files.length === 0) {
-        mensaje.style.color = "red";
+        mensaje.style.color = "var(--danger)";
         mensaje.textContent = "Selecciona un archivo CSV primero.";
         return;
       }
       
-      mensaje.style.color = "#1e2a5a";
+      mensaje.style.color = "var(--primary-blue)";
       mensaje.textContent = "Leyendo archivo CSV...";
 
       Papa.parse(input.files[0], {
@@ -204,11 +470,11 @@
           }
 
           if (errores === 0) {
-            mensaje.style.color = "green";
+            mensaje.style.color = "var(--accent-green)";
             mensaje.textContent = `¡${filas.length} obligaciones importadas con éxito!`;
             input.value = "";
           } else {
-            mensaje.style.color = "red";
+            mensaje.style.color = "var(--danger)";
             mensaje.textContent = `Importación completada con ${errores} errores en lotes. Revisa la consola del navegador.`;
           }
         }
@@ -222,7 +488,7 @@
       const anio = parseInt(inputAnio.value, 10);
 
       if (!anio) {
-        mensaje.style.color = "red";
+        mensaje.style.color = "var(--danger)";
         mensaje.textContent = "Ingresa un año gravable válido.";
         return;
       }
@@ -230,7 +496,7 @@
       const confirmacion = confirm(`¿Estás seguro de que deseas ELIMINAR TODAS las obligaciones del año gravable ${anio}? Esta acción no se puede deshacer.`);
       if (!confirmacion) return;
 
-      mensaje.style.color = "#1e2a5a";
+      mensaje.style.color = "var(--primary-blue)";
       mensaje.textContent = `Eliminando registros del año ${anio}...`;
 
       const { data, error } = await supabaseClient
@@ -240,10 +506,10 @@
         .select();
 
       if (error) {
-        mensaje.style.color = "red";
+        mensaje.style.color = "var(--danger)";
         mensaje.textContent = "Error al eliminar: " + error.message;
       } else {
-        mensaje.style.color = "green";
+        mensaje.style.color = "var(--accent-green)";
         mensaje.textContent = `¡Se eliminaron ${data ? data.length : 0} obligaciones del año gravable ${anio}!`;
         inputAnio.value = "";
       }

@@ -3,59 +3,188 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Planes y Precios - Calendario Tributario Colombia</title>
+  <title>Planes y Precios - TributoApp S.A.S.</title>
+  
+  <!-- Favicon e Identidad de Pestaña -->
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+
   <style>
-    /* Variables de marca */
     :root {
-      --primary: #1e2a5a;
-      --primary-hover: #141d3f;
-      --accent: #2563eb;
+      --primary: #0f172a;
+      --primary-blue: #1e2a5a;
+      --accent: #10b981;
+      --accent-hover: #0e9f6e;
       --accent-green: #10b981;
       --bg-body: #f8fafc;
+      --card-bg: #ffffff;
       --text-main: #0f172a;
       --text-muted: #64748b;
+      --border-color: #e2e8f0;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-    body { background: var(--bg-body); color: var(--text-main); line-height: 1.5; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
 
-    /* Barra de Navegación */
-    header { background: #ffffff; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; }
-    .nav-container { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; }
-    .logo { font-weight: 800; font-size: 1.25rem; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 8px; }
-    nav a { margin-left: 1.25rem; color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: color 0.2s; }
-    nav a:hover { color: var(--accent); }
-    .btn-nav-accent { background: var(--primary); color: #fff !important; padding: 0.5rem 1rem; border-radius: 8px; }
+    body {
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+    }
+
+    /* --- HEADER / NAVBAR --- */
+    .navbar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.8rem 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-logo {
+      font-size: 1.25rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--primary-blue);
+      text-decoration: none;
+    }
+
+    .brand-logo span.icon {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 1.1rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.8rem;
+      align-items: center;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: color 0.2s ease;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .nav-link:hover {
+      color: var(--primary-blue);
+    }
+
+    .nav-link.active {
+      color: var(--primary-blue);
+      font-weight: 700;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 4px;
+    }
+
+    /* --- CONTENEDOR PRINCIPAL --- */
+    .container {
+      max-width: 1100px;
+      width: 90%;
+      margin: 0 auto;
+      flex: 1;
+    }
 
     /* Encabezado Principal (Hero) */
-    .hero-sales { text-align: center; padding: 3.5rem 1.5rem 2rem 1.5rem; max-width: 800px; margin: 0 auto; }
-    .badge-trust { display: inline-block; background: #e0e7ff; color: #3730a3; padding: 0.35rem 0.85rem; border-radius: 50px; font-size: 0.825rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1rem; }
-    .hero-sales h1 { font-size: 2.25rem; font-weight: 800; color: var(--primary); margin-bottom: 0.75rem; letter-spacing: -0.5px; }
-    .hero-sales p { font-size: 1.1rem; color: var(--text-muted); }
+    .hero-sales {
+      text-align: center;
+      padding: 3rem 1.5rem 2rem 1.5rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .badge-trust {
+      display: inline-block;
+      background: rgba(16, 185, 129, 0.12);
+      color: #0e9f6e;
+      padding: 0.35rem 0.85rem;
+      border-radius: 50px;
+      font-size: 0.825rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    .hero-sales h1 {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--primary-blue);
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.5px;
+    }
+
+    .hero-sales p {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+    }
 
     /* Grid de Tarjetas de Precios */
-    .pricing-container { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
-    .planes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; align-items: stretch; }
-    
+    .pricing-container {
+      max-width: 1100px;
+      margin: 1.5rem auto 3rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .planes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      align-items: stretch;
+    }
+
     .plan-card {
-      background: #ffffff;
+      background: var(--card-bg);
       border-radius: 16px;
       padding: 2.25rem 1.75rem;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       position: relative;
       transition: transform 0.25s, box-shadow 0.25s;
     }
-    .plan-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
+
+    .plan-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    }
 
     /* Estilo Destacado para el Plan Recomendado */
     .plan-card.destacado {
       border: 2px solid var(--accent);
-      box-shadow: 0 8px 30px rgba(37, 99, 235, 0.15);
+      box-shadow: 0 8px 30px rgba(16, 185, 129, 0.15);
     }
+
     .badge-popular {
       position: absolute;
       top: -14px;
@@ -68,21 +197,67 @@
       font-size: 0.75rem;
       font-weight: 700;
       text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    .plan-nombre { font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-bottom: 0.25rem; }
-    .plan-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem; }
-    .plan-precio-box { margin-bottom: 1.5rem; display: flex; align-items: baseline; gap: 4px; }
-    .plan-precio { font-size: 2.25rem; font-weight: 800; color: var(--primary); }
-    .plan-frecuencia { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
-    
-    .plan-features { list-style: none; margin-bottom: 2rem; border-top: 1px solid #f1f5f9; padding-top: 1.25rem; }
-    .plan-features li { font-size: 0.925rem; color: #334155; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 8px; }
-    .plan-features li::before { content: "✓"; color: var(--accent-green); font-weight: 900; font-size: 1.1rem; }
+    .plan-nombre {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--primary-blue);
+      margin-bottom: 0.25rem;
+    }
+
+    .plan-sub {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+    }
+
+    .plan-precio-box {
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .plan-precio {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--primary-blue);
+    }
+
+    .plan-frecuencia {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .plan-features {
+      list-style: none;
+      margin-bottom: 2rem;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 1.25rem;
+    }
+
+    .plan-features li {
+      font-size: 0.925rem;
+      color: #334155;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .plan-features li::before {
+      content: "✓";
+      color: var(--accent-green);
+      font-weight: 900;
+      font-size: 1.1rem;
+    }
 
     .btn-plan {
       width: 100%;
-      background: var(--primary);
+      background: var(--primary-blue);
       color: #ffffff;
       border: none;
       padding: 0.85rem;
@@ -95,24 +270,101 @@
       text-decoration: none;
       display: block;
     }
-    .btn-plan:hover { background: var(--primary-hover); }
-    .btn-plan.btn-accent { background: var(--accent); }
-    .btn-plan.btn-accent:hover { background: #1d4ed8; }
+
+    .btn-plan:hover {
+      background: #141d3f;
+    }
+
+    .btn-plan.btn-accent {
+      background: var(--accent);
+    }
+
+    .btn-plan.btn-accent:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-plan:active {
+      transform: scale(0.99);
+    }
 
     /* Preguntas Frecuentes (FAQ) */
-    .faq-section { max-width: 800px; margin: 4rem auto 2rem auto; padding: 0 1.5rem; }
-    .faq-title { text-align: center; font-size: 1.6rem; font-weight: 800; color: var(--primary); margin-bottom: 2rem; }
-    .faq-item { background: #fff; padding: 1.25rem 1.5rem; border-radius: 12px; margin-bottom: 1rem; border: 1px solid #e2e8f0; }
-    .faq-question { font-weight: 700; color: var(--primary); margin-bottom: 0.35rem; }
-    .faq-answer { font-size: 0.925rem; color: var(--text-muted); }
+    .faq-section {
+      max-width: 800px;
+      margin: 2rem auto 4rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .faq-title {
+      text-align: center;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--primary-blue);
+      margin-bottom: 2rem;
+    }
+
+    .faq-item {
+      background: var(--card-bg);
+      padding: 1.25rem 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    }
+
+    .faq-question {
+      font-weight: 700;
+      color: var(--primary-blue);
+      margin-bottom: 0.35rem;
+    }
+
+    .faq-answer {
+      font-size: 0.925rem;
+      color: var(--text-muted);
+    }
 
     /* Pie de página */
-    footer { background: #0f172a; color: #94a3b8; padding: 3rem 1.5rem 1.5rem 1.5rem; margin-top: 4rem; font-size: 0.9rem; }
-    .footer-container { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; }
-    .footer-col h4 { color: #ffffff; font-size: 1rem; margin-bottom: 1rem; }
-    .footer-col a { color: #94a3b8; text-decoration: none; display: block; margin-bottom: 0.5rem; }
-    .footer-col a:hover { color: #38bdf8; }
-    .footer-bottom { max-width: 1100px; margin: 2rem auto 0 auto; padding-top: 1.5rem; border-top: 1px solid #334155; text-align: center; font-size: 0.8rem; }
+    footer {
+      background: var(--primary);
+      color: #94a3b8;
+      padding: 3rem 1.5rem 1.5rem 1.5rem;
+      margin-top: auto;
+      font-size: 0.9rem;
+    }
+
+    .footer-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2rem;
+    }
+
+    .footer-col h4 {
+      color: #ffffff;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .footer-col a {
+      color: #94a3b8;
+      text-decoration: none;
+      display: block;
+      margin-bottom: 0.5rem;
+      transition: color 0.2s;
+    }
+
+    .footer-col a:hover {
+      color: var(--accent);
+    }
+
+    .footer-bottom {
+      max-width: 1100px;
+      margin: 2rem auto 0 auto;
+      padding-top: 1.5rem;
+      border-top: 1px solid #334155;
+      text-align: center;
+      font-size: 0.8rem;
+    }
 
     /* Botón Flotante WhatsApp */
     .whatsapp-btn {
@@ -133,129 +385,150 @@
       z-index: 1000;
       transition: transform 0.2s, box-shadow 0.2s;
     }
-    .whatsapp-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5); }
+
+    .whatsapp-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5);
+    }
   </style>
 </head>
 <body>
 
-  <!-- NAVEGACIÓN -->
-  <header>
+  <!-- HEADER / NAVBAR -->
+  <header class="navbar">
     <div class="nav-container">
-      <a href="index.html" class="logo">
-        📊 Calendario Tributario
+      <a href="dashboard.html" class="brand-logo">
+        <span class="icon">📊</span> TributoApp S.A.S.
       </a>
-      <nav id="nav-links">
-        <a href="dashboard.html">Consulta</a>
-        <a href="precios.html" style="color: var(--accent);">Precios</a>
-        <a href="login.html" class="btn-nav-accent">Acceder</a>
+      <nav class="nav-links" id="nav-links">
+        <a href="dashboard.html" class="nav-link">Consulta</a>
+        <a href="precios.html" class="nav-link active">Precios</a>
       </nav>
     </div>
   </header>
 
-  <!-- HERO VENDEDOR -->
-  <section class="hero-sales">
-    <span class="badge-trust">⚡ Normativa DIAN Colombia 2026</span>
-    <h1>Evita sanciones por vencimientos olvidados</h1>
-    <p>La herramienta ágil e inteligente diseñada para contadores, asesores tributarios y empresas que buscan control total sobre sus obligaciones.</p>
-  </section>
+  <!-- CONTENEDOR PRINCIPAL -->
+  <main class="container">
+    
+    <!-- HERO VENDEDOR -->
+    <section class="hero-sales">
+      <span class="badge-trust">⚡ Normativa DIAN Colombia</span>
+      <h1>Evita sanciones por vencimientos olvidados</h1>
+      <p>La herramienta ágil e inteligente diseñada para contadores, asesores tributarios y empresas que buscan control total sobre sus obligaciones.</p>
+    </section>
 
-  <!-- TARJETAS DE PRECIOS -->
-  <main class="pricing-container">
-    <div class="planes-grid" id="planes-grid">
-      <!-- Carga dinámica vía Javascript o fallback visual -->
+    <!-- TARJETAS DE PRECIOS -->
+    <div class="pricing-container">
+      <div class="planes-grid" id="planes-grid">
+        <!-- Carga dinámica vía JavaScript o fallback visual -->
+      </div>
     </div>
+
+    <!-- SECCIÓN FAQ -->
+    <section class="faq-section">
+      <h2 class="faq-title">Preguntas Frecuentes</h2>
+      <div class="faq-item">
+        <div class="faq-question">¿Los calendarios están actualizados con la DIAN?</div>
+        <div class="faq-answer">Sí, nuestra base de datos se sincroniza con los decretos y resoluciones oficiales de la DIAN y entes municipales.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">¿Puedo usar la plataforma desde mi celular?</div>
+        <div class="faq-answer">Por supuesto. La aplicación web está 100% optimizada para funcionar rápido en smartphones, tablets y computadores.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">¿Necesitas ayuda para elegir un plan o requerimiento corporativo?</div>
+        <div class="faq-answer">Escríbenos directamente por WhatsApp y nuestro equipo te asesorará en menos de 5 minutos.</div>
+      </div>
+    </section>
+
   </main>
-
-  <!-- SECCIÓN FAQ (REDUCCIÓN DE FRICCIÓN) -->
-  <section class="faq-section">
-    <h2 class="faq-title">Preguntas Frecuentes</h2>
-    <div class="faq-item">
-      <div class="faq-question">¿Los calendarios están actualizados con la DIAN?</div>
-      <div class="faq-answer">Sí, nuestra base de datos se sincroniza con los decretos y resoluciones oficiales de la DIAN y entes municipales.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-question">¿Puedo usar la plataforma desde mi celular?</div>
-      <div class="faq-answer">Por supuesto. La aplicación web está 100% optimizada para funcionar rápido en smartphones, tablets y computadores.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-question">¿Necesitas ayuda para elegir un plan o requerimiento corporativo?</div>
-      <div class="faq-answer">Escríbenos directamente por WhatsApp y nuestro equipo te asesorará en menos de 5 minutos.</div>
-    </div>
-  </section>
 
   <!-- FOOTER -->
   <footer>
     <div class="footer-container">
       <div class="footer-col">
-        <h4>Calendario Tributario</h4>
+        <h4>TributoApp S.A.S.</h4>
         <p>Optimizando la gestión fiscal de los profesionales contables en Colombia.</p>
       </div>
       <div class="footer-col">
         <h4>Navegación</h4>
         <a href="dashboard.html">Consulta de Vencimientos</a>
         <a href="precios.html">Planes y Tarifas</a>
-        <a href="login.html">Ingreso a Sistema</a>
       </div>
       <div class="footer-col">
         <h4>Soporte</h4>
         <a href="https://wa.me/573000000000" target="_blank">💬 WhatsApp de Atención</a>
-        <a href="mailto:soporte@tusitio.com">✉️ soporte@tusitio.com</a>
+        <a href="mailto:soporte@tributoapp.com">✉️ soporte@tributoapp.com</a>
       </div>
     </div>
     <div class="footer-bottom">
-      &copy; 2026 Calendario Tributario Colombia. Todos los derechos reservados.
+      &copy; 2026 TributoApp S.A.S. Todos los derechos reservados.
     </div>
   </footer>
 
-  <!-- BOTÓN FLOTANTE WHATSAPP CON MENSAJE PREDETERMINADO DE VENTA -->
-  <a href="https://wa.me/573000000000?text=Hola,%20estoy%20interesado%20en%20adquirir%20un%20plan%20del%20Calendario%20Tributario" 
+  <!-- BOTÓN FLOTANTE WHATSAPP -->
+  <a href="https://wa.me/573000000000?text=Hola,%20estoy%20interesado%20en%20adquirir%20un%20plan%20de%20TributoApp" 
      class="whatsapp-btn" 
      target="_blank">
     <span>💬</span> Asesoría Inmediata
   </a>
 
-  <!-- LÓGICA DE SUPABASE Y NAVEGACIÓN -->
+  <!-- SCRIPTS Y LÓGICA -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabaseClient.js"></script>
   <script>
-    // 1. Mostrar enlace Admin solo a administradores autenticados
-    async function renderizarNavegacion() {
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      const navLinks = document.getElementById('nav-links');
-
-      if (session && navLinks) {
-        const { data: perfil } = await supabaseClient
-          .from('perfiles')
-          .select('rol')
-          .eq('id', session.user.id)
-          .single();
-
-        if (perfil && perfil.rol === 'admin') {
-          const adminLink = document.createElement('a');
-          adminLink.href = 'admin.html';
-          adminLink.textContent = 'Admin';
-          adminLink.style.color = '#e53e3e';
-          navLinks.insertBefore(adminLink, navLinks.querySelector('.btn-nav-accent'));
-        }
-      }
-    }
-
-    // 2. Acción al seleccionar plan
+    // Acción al seleccionar plan
     function seleccionarPlan(planId, nombrePlan) {
-      // Redirige al registro o a WhatsApp para cerrar la venta directamente
       window.location.href = `registro.html?plan=${planId}`;
     }
 
-    // 3. Cargar planes desde Supabase con diseño comercial
+    // Cargar planes desde Supabase con diseño comercial
     async function cargarPlanes() {
       const grid = document.getElementById('planes-grid');
-      const { data: planes, error } = await supabaseClient
-        .from('planes')
-        .select('*')
-        .order('precio', { ascending: true });
+      
+      try {
+        const { data: planes, error } = await supabaseClient
+          .from('planes')
+          .select('*')
+          .order('precio', { ascending: true });
 
-      if (error || !planes || planes.length === 0) {
-        // Fallback visual por si no hay datos en la tabla 'planes' aún
+        if (error || !planes || planes.length === 0) {
+          throw new Error("No hay planes en la base de datos, usando fallback.");
+        }
+
+        grid.innerHTML = "";
+        planes.forEach((plan, index) => {
+          const precioFormateado = Number(plan.precio).toLocaleString('es-CO');
+          const esDestacado = index === 1; // El segundo plan siempre se resalta
+          
+          const div = document.createElement('div');
+          div.className = `plan-card ${esDestacado ? 'destacado' : ''}`;
+          
+          div.innerHTML = `
+            ${esDestacado ? '<span class="badge-popular">Más Popular</span>' : ''}
+            <div>
+              <div class="plan-nombre">${plan.nombre}</div>
+              <div class="plan-sub">Acceso completo a la plataforma</div>
+              <div class="plan-precio-box">
+                <span class="plan-precio">$${precioFormateado}</span>
+                <span class="plan-frecuencia">COP / ${plan.frecuencia_pago || 'mes'}</span>
+              </div>
+              <ul class="plan-features">
+                <li>Consulta de calendario tributario nacional</li>
+                <li>Filtros dinámicos por NIT e impuesto</li>
+                <li>Actualizaciones normativas automáticas</li>
+                <li>Soporte técnico directo</li>
+              </ul>
+            </div>
+            <button class="btn-plan ${esDestacado ? 'btn-accent' : ''}" onclick="seleccionarPlan('${plan.id}', '${plan.nombre}')">
+              ${esDestacado ? '¡Comenzar Ahora!' : 'Elegir Plan'}
+            </button>
+          `;
+          grid.appendChild(div);
+        });
+
+      } catch (err) {
+        // Fallback visual por si la tabla 'planes' no está creada o está vacía
         grid.innerHTML = `
           <div class="plan-card">
             <div>
@@ -293,39 +566,42 @@
             <button class="btn-plan btn-accent" onclick="location.href='registro.html?plan=pro'">Elegir Plan Pro</button>
           </div>
         `;
-        return;
       }
+    }
 
-      grid.innerHTML = "";
-      planes.forEach((plan, index) => {
-        const precioFormateado = Number(plan.precio).toLocaleString('es-CO');
-        const esDestacado = index === 1; // El segundo plan siempre se resalta como "Popular"
-        
-        const div = document.createElement('div');
-        div.className = `plan-card ${esDestacado ? 'destacado' : ''}`;
-        
-        div.innerHTML = `
-          ${esDestacado ? '<span class="badge-popular">Más Popular</span>' : ''}
-          <div>
-            <div class="plan-nombre">${plan.nombre}</div>
-            <div class="plan-sub">Acceso completo a la plataforma</div>
-            <div class="plan-precio-box">
-              <span class="plan-precio">$${precioFormateado}</span>
-              <span class="plan-frecuencia">COP / ${plan.frecuencia_pago || 'mes'}</span>
-            </div>
-            <ul class="plan-features">
-              <li>Consulta de calendario tributario nacional</li>
-              <li>Filtros dinámicos por NIT e impuesto</li>
-              <li>Actualizaciones normativas automáticas</li>
-              <li>Soporte técnico directo</li>
-            </ul>
-          </div>
-          <button class="btn-plan ${esDestacado ? 'btn-accent' : ''}" onclick="seleccionarPlan('${plan.id}', '${plan.nombre}')">
-            ${esDestacado ? '¡Comenzar Ahora!' : 'Elegir Plan'}
-          </button>
-        `;
-        grid.appendChild(div);
-      });
+    // Renderizar opción Admin y Botón de Cerrar Sesión en la Navegación
+    async function renderizarNavegacion() {
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        const nav = document.getElementById('nav-links');
+
+        if (session && nav) {
+          const { data: perfil } = await supabaseClient
+            .from('perfiles')
+            .select('rol')
+            .eq('id', session.user.id)
+            .single();
+
+          if (perfil && perfil.rol === 'admin') {
+            const adminLink = document.createElement('a');
+            adminLink.href = 'admin.html';
+            adminLink.className = 'nav-link';
+            adminLink.textContent = 'Admin';
+            nav.appendChild(adminLink);
+          }
+
+          const logoutBtn = document.createElement('button');
+          logoutBtn.className = 'nav-link';
+          logoutBtn.textContent = 'Cerrar Sesión';
+          logoutBtn.addEventListener('click', async () => {
+            await supabaseClient.auth.signOut();
+            window.location.href = 'index.html';
+          });
+          nav.appendChild(logoutBtn);
+        }
+      } catch (err) {
+        console.log("Sesión no detectada o error al cargar perfil en precios:", err);
+      }
     }
 
     renderizarNavegacion();
