@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendario Tributario</title>
+  <!-- Respaldo por si JavaScript no carga de inmediato -->
+  <meta http-equiv="refresh" content="2; url=login.html">
+  <style>
+    body {
+      background: #f4f6f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+      color: #1e2a5a;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <p>Cargando Calendario Tributario...</p>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseClient.js"></script>
+  <script>
+    (async () => {
+      // 1. Consultar si hay una sesión activa en Supabase
+      const { data: { session } } = await supabaseClient.auth.getSession();
+
+      if (session) {
+        // Usuario autenticado -> Redirigir al Dashboard
+        window.location.replace("dashboard.html");
+      } else {
+        // Usuario no autenticado -> Redirigir al Login
+        window.location.replace("login.html");
+      }
+    })();
+  </script>
+</body>
+</html>

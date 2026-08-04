@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administrador - Calendario Tributario</title>
+  <style>
+    * { box-sizing:border-box; margin:0; padding:0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background:#f4f6f9; padding:2rem 1.5rem; }
+    .container { max-width: 900px; margin:0 auto; }
+    nav { text-align:center; margin-bottom:1.5rem; }
+    nav a { margin:0 0.75rem; color:#1e2a5a; font-weight:600; text-decoration:none; }
+    .card { background:#fff; border-radius:12px; padding:1.5rem 2rem; margin-bottom:1.5rem; border:1px solid #e2e8f0; }
+    .card-title { font-size:1.15rem; font-weight:700; color:#1e2a5a; margin-bottom:1rem; }
+    .form-grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:1rem; }
+    label { font-size:0.8rem; font-weight:600; color:#718096; }
+    input, select { width:100%; padding:0.6rem; border:1px solid #e2e8f0; border-radius:8px; margin-top:0.3rem; margin-bottom:0.8rem; }
+    button { background:#1e2a5a; color:#fff; border:none; padding:0.7rem 1.5rem; border-radius:8px; font-weight:600; cursor:pointer; }
+    .btn-danger { background:#e53e3e; }
+    .btn-danger:hover { background:#c53030; }
+    #mensaje-form, #mensaje-csv, #mensaje-eliminar { margin-top:0.5rem; font-size:0.9rem; font-weight:600; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav>
+      <a href="dashboard.html">Consulta</a>
+      <a href="precios.html">Precios</a>
+      <a href="admin.html">Admin</a>
+    </nav>
+
+    <!-- 1. Formulario para agregar una sola obligación -->
+    <div class="card">
+      <div class="card-title">Agregar una obligación puntual</div>
+      <form id="form-obligacion">
+        <div class="form-grid">
+          <div>
+            <label>Impuesto</label>
+            <input type="text" id="f-impuesto" placeholder="Ej: IVA" required>
+          </div>
+          <div>
+            <label>Periodo</label>
+            <input type="text" id="f-periodo" placeholder="Ej: Ene-Feb" required>
+          </div>
+          <div>
+            <label>Frecuencia</label>
+            <select id="f-frecuencia" required>
+              <option value="Mensual">Mensual</option>
+              <option value="Bimestral">Bimestral</option>
+              <option value="Cuatrimestral">Cuatrimestral</option>
+              <option value="Anual">Anual</option>
+            </select>
+          </div>
+          <div>
+            <label>Sujeto activo</label>
+            <input type="text" id="f-sujeto" placeholder="Ej: DIAN" required>
+          </div>
+          <div>
+            <label>Tipo contribuyente</label>
+            <select id="f-tipo" required>
+              <option value="Gran Contribuyente">Gran Contribuyente</option>
+              <option value="Responsable de IVA Bimestral">Responsable de IVA Bimestral</option>
+              <option value="Responsable de IVA Cuatrimestral">Responsable de IVA Cuatrimestral</option>
+              <option value="No responsable de IVA">No responsable de IVA</option>
+            </select>
+          </div>
+          <div>
+            <label>Grupo NIT (0-9)</label>
+            <input type="number" id="f-grupo" min="0" max="9" required>
+          </div>
+          <div>
+            <label>Fecha de vencimiento</label>
+            <input type="date" id="f-fecha" required>
+          </div>
+          <div>
+            <label>Año gravable</label>
+            <input type="number" id="f-anio" placeholder="Ej: 2027" required>
+          </div>
+        </div>
+        <button type="submit">Guardar obligación</button>
+      </form>
+      <p id="mensaje-form"></p>
+    </div>
+
+    <!-- 2. Carga Masiva por CSV con Batching -->
+    <div class="card">
+      <div class="card-title">Cargar el calendario completo de un nuevo año (CSV)</div>
+      <p style="font-size:0.85rem; color:#718096; margin-bottom:1rem;">
+        El CSV debe tener exactamente estas columnas en la primera fila:<br>
+        <code>tipo_contribuyente,impuesto,periodo,frecuencia,sujeto_activo,grupo_nit,fecha_vencimiento,anio_gravable</code>
+      </p>
+      <input type="file" id="input-csv" accept=".csv">
+      <br><br>
+      <button id="btn-importar">Importar CSV</button>
+      <p id="mensaje-csv"></p>
+    </div>
+
+    <!-- 3. Limpieza / Sobrescritura de un Año Gravable -->
+    <div class="card" style="border-left: 4px solid #e53e3e;">
+      <div class="card-title" style="color:#c53030;">Limpiar / Eliminar datos de un año gravable</div>
+      <p style="font-size:0.85rem; color:#718096; margin-bottom:1rem;">
+        Si necesitas resubir un año completo por corregir un error, elimina primero los registros de ese año para evitar duplicados.
+      </p>
+      <div style="display:flex; gap:1rem; align-items:center; max-width:400px;">
+        <input type="number" id="input-anio-eliminar" placeholder="Ej: 2027" style="margin:0;">
+        <button id="btn-eliminar-anio" class="btn-danger" style="white-space:nowrap;">Eliminar Año</button>
+      </div>
+      <p id="mensaje-eliminar"></p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="supabaseClient.js"></script>
+  <script>
+    // 1. Validar sesión y permisos de Administrador al entrar
+    (async () => {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) { window.location.href = "login.html"; return; }
+
+      const { data: perfil, error } = await supabaseClient
+        .from('perfiles')
+        .select('rol')
+        .eq('id', session.user.id)
+        .single();
+
+      if (error || !perfil || perfil.rol !== 'admin') {
+        alert("No tienes permisos de administrador.");
+        window.location.href = "dashboard.html";
+      }
+    })();
+
+    // 2. Guardar una sola obligación
+    document.getElementById('form-obligacion').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const mensaje = document.getElementById('mensaje-form');
+      mensaje.textContent = "Guardando...";
+
+      const nuevaFila = {
+        impuesto: document.getElementById('f-impuesto').value,
+        periodo: document.getElementById('f-periodo').value,
+        frecuencia: document.getElementById('f-frecuencia').value,
+        sujeto_activo: document.getElementById('f-sujeto').value,
+        tipo_contribuyente: document.getElementById('f-tipo').value,
+        grupo_nit: parseInt(document.getElementById('f-grupo').value, 10),
+        fecha_vencimiento: document.getElementById('f-fecha').value,
+        anio_gravable: parseInt(document.getElementById('f-anio').value, 10)
+      };
+
+      const { error } = await supabaseClient.from('calendario_tributario').insert(nuevaFila);
+
+      if (error) { 
+        mensaje.style.color = "red";
+        mensaje.textContent = "Error: " + error.message; 
+      } else { 
+        mensaje.style.color = "green";
+        mensaje.textContent = "¡Obligación guardada correctamente!"; 
+        e.target.reset(); 
+      }
+    });
+
+    // 3. Importación masiva por lotes (Batching)
+    document.getElementById('btn-importar').addEventListener('click', () => {
+      const input = document.getElementById('input-csv');
+      const mensaje = document.getElementById('mensaje-csv');
+
+      if (!input.files || input.files.length === 0) {
+        mensaje.style.color = "red";
+        mensaje.textContent = "Selecciona un archivo CSV primero.";
+        return;
+      }
+      
+      mensaje.style.color = "#1e2a5a";
+      mensaje.textContent = "Leyendo archivo CSV...";
+
+      Papa.parse(input.files[0], {
+        header: true,
+        skipEmptyLines: true,
+        complete: async (resultado) => {
+          const filas = resultado.data.map(fila => ({
+            tipo_contribuyente: fila.tipo_contribuyente?.trim(),
+            impuesto: fila.impuesto?.trim(),
+            periodo: fila.periodo?.trim(),
+            frecuencia: fila.frecuencia?.trim(),
+            sujeto_activo: fila.sujeto_activo?.trim(),
+            grupo_nit: parseInt(fila.grupo_nit, 10),
+            fecha_vencimiento: fila.fecha_vencimiento?.trim(),
+            anio_gravable: parseInt(fila.anio_gravable, 10)
+          }));
+
+          mensaje.textContent = `Procesando ${filas.length} registros en lotes de 200...`;
+
+          const TAMANO_LOTE = 200;
+          let errores = 0;
+
+          for (let i = 0; i < filas.length; i += TAMANO_LOTE) {
+            const lote = filas.slice(i, i + TAMANO_LOTE);
+            const { error } = await supabaseClient.from('calendario_tributario').insert(lote);
+            
+            if (error) {
+              console.error(`Error insertando el lote ${i / TAMANO_LOTE + 1}:`, error);
+              errores++;
+            }
+          }
+
+          if (errores === 0) {
+            mensaje.style.color = "green";
+            mensaje.textContent = `¡${filas.length} obligaciones importadas con éxito!`;
+            input.value = "";
+          } else {
+            mensaje.style.color = "red";
+            mensaje.textContent = `Importación completada con ${errores} errores en lotes. Revisa la consola del navegador.`;
+          }
+        }
+      });
+    });
+
+    // 4. Limpieza de un año gravable específico
+    document.getElementById('btn-eliminar-anio').addEventListener('click', async () => {
+      const inputAnio = document.getElementById('input-anio-eliminar');
+      const mensaje = document.getElementById('mensaje-eliminar');
+      const anio = parseInt(inputAnio.value, 10);
+
+      if (!anio) {
+        mensaje.style.color = "red";
+        mensaje.textContent = "Ingresa un año gravable válido.";
+        return;
+      }
+
+      const confirmacion = confirm(`¿Estás seguro de que deseas ELIMINAR TODAS las obligaciones del año gravable ${anio}? Esta acción no se puede deshacer.`);
+      if (!confirmacion) return;
+
+      mensaje.style.color = "#1e2a5a";
+      mensaje.textContent = `Eliminando registros del año ${anio}...`;
+
+      const { data, error } = await supabaseClient
+        .from('calendario_tributario')
+        .delete()
+        .eq('anio_gravable', anio)
+        .select();
+
+      if (error) {
+        mensaje.style.color = "red";
+        mensaje.textContent = "Error al eliminar: " + error.message;
+      } else {
+        mensaje.style.color = "green";
+        mensaje.textContent = `¡Se eliminaron ${data ? data.length : 0} obligaciones del año gravable ${anio}!`;
+        inputAnio.value = "";
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Precios - Calendario Tributario</title>
+  <style>
+    * { box-sizing: border-box; margin:0; padding:0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background:#f4f6f9; padding:2rem 1.5rem; }
+    .container { max-width: 900px; margin: 0 auto; text-align:center; }
+    nav { text-align:center; margin-bottom:2rem; }
+    nav a { margin: 0 0.75rem; color:#1e2a5a; text-decoration:none; font-weight:600; }
+    h1 { color:#1e2a5a; margin-bottom: 0.5rem; }
+    p.subtitle { color:#718096; margin-bottom: 2rem; }
+    .planes-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap:1.5rem; }
+    .plan-card { background:#fff; border-radius:12px; padding:2rem 1.5rem; border:1px solid #e2e8f0; box-shadow:0 4px 12px rgba(0,0,0,0.03); display:flex; flex-direction:column; justify-content:space-between; }
+    .plan-nombre { font-size:1.3rem; font-weight:700; color:#1e2a5a; margin-bottom:0.5rem; }
+    .plan-precio { font-size:2rem; font-weight:800; color:#1e2a5a; margin-bottom:0.25rem; }
+    .plan-frecuencia { font-size:0.85rem; color:#718096; margin-bottom:1rem; }
+    .plan-descripcion { font-size:0.95rem; color:#2d3748; margin-bottom:1.5rem; }
+    .btn-plan { margin-top:auto; width:100%; background:#1e2a5a; color:#fff; border:none; padding:0.75rem; border-radius:8px; font-weight:600; cursor:pointer; transition: background 0.2s; }
+    .btn-plan:hover { background:#141d3f; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav>
+      <a href="dashboard.html">Consulta</a>
+      <a href="precios.html">Precios</a>
+    </nav>
+    
+    <h1>Nuestros planes</h1>
+    <p class="subtitle">Elige el que se ajuste a tu necesidad</p>
+    <div class="planes-grid" id="planes-grid"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseClient.js"></script>
+  <script>
+    // 1. Mostrar enlace Admin solo a administradores
+    async function renderizarNavegacion() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      const nav = document.querySelector('nav');
+
+      if (session && nav) {
+        const { data: perfil } = await supabaseClient
+          .from('perfiles')
+          .select('rol')
+          .eq('id', session.user.id)
+          .single();
+
+        if (perfil && perfil.rol === 'admin') {
+          const adminLink = document.createElement('a');
+          adminLink.href = 'admin.html';
+          adminLink.style = 'margin:0 0.75rem; color:#1e2a5a; font-weight:600; text-decoration:none;';
+          adminLink.textContent = 'Admin';
+          nav.appendChild(adminLink);
+        }
+      }
+    }
+
+    // 2. Acción al hacer clic en un plan
+    function seleccionarPlan(planId) {
+      // Redirige al registro pasando el ID del plan seleccionado
+      window.location.href = `registro.html?plan=${planId}`;
+    }
+
+    // 3. Cargar planes desde Supabase
+    async function cargarPlanes() {
+      const grid = document.getElementById('planes-grid');
+      const { data, error } = await supabaseClient
+        .from('planes')
+        .select('*')
+        .order('precio', { ascending: true });
+
+      if (error) {
+        grid.innerHTML = `<p>Error al cargar los planes: ${error.message}</p>`;
+        return;
+      }
+
+      grid.innerHTML = "";
+      data.forEach(plan => {
+        const precioFormateado = Number(plan.precio).toLocaleString('es-CO');
+        const div = document.createElement('div');
+        div.className = 'plan-card';
+        div.innerHTML = `
+          <div>
+            <div class="plan-nombre">${plan.nombre}</div>
+            <div class="plan-precio">$${precioFormateado}</div>
+            <div class="plan-frecuencia">COP / ${plan.frecuencia_pago}</div>
+            <div class="plan-descripcion">${plan.descripcion || ''}</div>
+          </div>
+          <button class="btn-plan" onclick="seleccionarPlan('${plan.id}')">
+            Elegir Plan
+          </button>
+        `;
+        grid.appendChild(div);
+      });
+    }
+
+    // Ejecutar al cargar la página
+    renderizarNavegacion();
+    cargarPlanes();
+  </script>
+</body>
+</html>
