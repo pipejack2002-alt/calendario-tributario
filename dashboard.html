@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - Consultar Calendario Tributario</title>
-  
+
   <!-- Favicon e Identidad de Pestaña -->
   <link rel="icon" type="image/png" href="assets/img/favicon.png">
 
@@ -20,7 +21,7 @@
       --text-main: #0f172a;
       --text-muted: #64748b;
       --border-color: #e2e8f0;
-      
+
       --badge-vencido-bg: #fde8e8;
       --badge-vencido-text: #9b1c1c;
       --badge-proximo-bg: #fef08a;
@@ -143,7 +144,8 @@
       color: var(--primary-blue);
     }
 
-    input[type="text"], select {
+    input[type="text"],
+    select {
       padding: 0.75rem 1rem;
       border: 1px solid #cbd5e1;
       border-radius: 10px;
@@ -154,7 +156,8 @@
       color: var(--text-main);
     }
 
-    input[type="text"]:focus, select:focus {
+    input[type="text"]:focus,
+    select:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
     }
@@ -279,9 +282,20 @@
       font-weight: 700;
     }
 
-    .badge-vencido { background: var(--badge-vencido-bg); color: var(--badge-vencido-text); }
-    .badge-proximo { background: var(--badge-proximo-bg); color: var(--badge-proximo-text); }
-    .badge-vigente { background: var(--badge-vigente-bg); color: var(--badge-vigente-text); }
+    .badge-vencido {
+      background: var(--badge-vencido-bg);
+      color: var(--badge-vencido-text);
+    }
+
+    .badge-proximo {
+      background: var(--badge-proximo-bg);
+      color: var(--badge-proximo-text);
+    }
+
+    .badge-vigente {
+      background: var(--badge-vigente-bg);
+      color: var(--badge-vigente-text);
+    }
 
     /* Resumen por Mes */
     .summary-section {
@@ -302,6 +316,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <!-- HEADER PRINCIPAL CON LOGO Y NAVEGACIÓN -->
@@ -319,14 +334,14 @@
 
   <!-- CONTENEDOR PRINCIPAL -->
   <main class="container">
-    
+
     <!-- Formulario de Consulta -->
     <section class="card">
       <h2 class="card-title">Consultar Calendario Tributario</h2>
-      
+
       <form id="form-consulta">
         <div class="form-grid">
-          
+
           <div class="form-group">
             <label for="nit">NIT *</label>
             <input type="text" id="nit" placeholder="901.260.460-0" value="901.260.460-0" required autocomplete="off">
@@ -380,7 +395,7 @@
 
     <!-- Sección de Resultados -->
     <div id="seccion-resultados" style="display: none;">
-      
+
       <!-- KPIs / Tarjetas de Resumen -->
       <div class="kpi-grid">
         <div class="kpi-card">
@@ -642,8 +657,8 @@
     function renderizarTabla() {
       cuerpo.innerHTML = "";
 
-      const lista = filtroEstadoActual === "todos" 
-        ? obligacionesProcesadas 
+      const lista = filtroEstadoActual === "todos"
+        ? obligacionesProcesadas
         : obligacionesProcesadas.filter(o => o.categoriaEstado === filtroEstadoActual);
 
       if (lista.length === 0) {
@@ -756,4 +771,5 @@
     renderizarNavegacion();
   </script>
 </body>
+
 </html>
