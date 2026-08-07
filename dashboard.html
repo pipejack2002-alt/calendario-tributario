@@ -340,17 +340,18 @@
     <div id="onboarding-banner" style="display: none; background: #eefdf6; border: 1px solid #10b981; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
       <h3 style="color: #0f172a; margin-bottom: 0.5rem;">¡Hola! 👋 Bienvenido a TributoApp</h3>
       <p style="color: #475569; margin-bottom: 1rem;">Para empezar a recibir alertas precisas y optimizar tus consultas, configura tu NIT y tus datos fiscales.</p>
-      <a href="#form-consulta" style="background: #10b981; color: white; padding: 0.6rem 1.2rem; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">Completar mi perfil ahora</a>
+      <a href="#card-alertas" style="background: #10b981; color: white; padding: 0.6rem 1.2rem; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">Completar mi perfil ahora</a>
     </div>
 
     <div id="banner-alertas" style="display:none; background:#fef08a; border:1px solid #f0c419; border-radius:10px; padding:1rem 1.25rem; margin-bottom:1.5rem; font-weight:600; color:#713f12;"></div>
+    
     <div class="card" id="card-alertas" style="display:none;">
       <div class="card-title" style="font-size:1.1rem;">🔔 Alertas automáticas</div>
       <p style="color:#64748b; font-size:0.9rem; margin-bottom:1rem;">Guarda tu NIT principal para que te avisemos aquí cuando algo esté por vencer.</p>
       <div class="form-grid">
         <div class="form-group">
           <label>NIT a seguir</label>
-          <input type="text" id="nit-seguimiento">
+          <input type="text" id="nit-seguimiento" placeholder="Ej: 901.260.460-0">
         </div>
         <div class="form-group">
           <label>Tipo Contribuyente</label>
@@ -822,14 +823,54 @@
       if (perfil.nit_seguimiento) document.getElementById('nit-seguimiento').value = perfil.nit_seguimiento;
       if (perfil.tipo_seguimiento) document.getElementById('tipo-seguimiento').value = perfil.tipo_seguimiento;
 
+      // GUARDAR Y VINCULAR CON EL SISTEMA MULTIUSUARIO DE CORREOS
       document.getElementById('btn-guardar-seguimiento').addEventListener('click', async () => {
-        const nit = document.getElementById('nit-seguimiento').value;
+        const nit = document.getElementById('nit-seguimiento').value.trim();
         const tipo = document.getElementById('tipo-seguimiento').value;
-        await supabaseClient.from('perfiles').update({ nit_seguimiento: nit, tipo_seguimiento: tipo }).eq('id', session.user.id);
-        
-        // Ocultar banner de onboarding al guardar
-        document.getElementById('onboarding-banner').style.display = 'none';
-        revisarAlertas(nit, tipo);
+
+        if (!nit) {
+          alert("Por favor, ingresa un NIT válido.");
+          return;
+        }
+
+        // Extraer último dígito del NIT
+        const nitLimpio = nit.split('-')[0].replace(/\D/g, '');
+        if (!nitLimpio) {
+          alert("El NIT ingresado no contiene números válidos.");
+          return;
+        }
+        const ultimoDigito = parseInt(nitLimpio.slice(-1), 10);
+
+        try {
+          // 1. Actualizar perfil de usuario
+          await supabaseClient
+            .from('perfiles')
+            .update({ nit_seguimiento: nit, tipo_seguimiento: tipo })
+            .eq('id', session.user.id);
+
+          // 2. Insertar en mis_nits para que la Edge Function detecte y envíe las alertas automáticas por correo
+          await supabaseClient
+            .from('mis_nits')
+            .insert([
+              {
+                user_id: session.user.id,
+                email: session.user.email,
+                nit: nit,
+                ultimo_digito: ultimoDigito,
+                tipo_contribuyente: tipo
+              }
+            ]);
+
+          // Ocultar banner de onboarding al guardar
+          document.getElementById('onboarding-banner').style.display = 'none';
+          
+          // Revisar alertas visuales
+          revisarAlertas(nit, tipo);
+
+          alert(`¡NIT ${nit} guardado correctamente! Recibirás notificaciones por correo (${session.user.email}) cuando tenga vencimientos.`);
+        } catch (err) {
+          console.error("Error al guardar NIT de seguimiento:", err);
+        }
       });
 
       if (perfil.nit_seguimiento) revisarAlertas(perfil.nit_seguimiento, perfil.tipo_seguimiento);
