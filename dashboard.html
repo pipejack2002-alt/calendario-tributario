@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Consultar Calendario Tributario</title>
+
+  <!-- Favicon e Identidad de Pestaña -->
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+
+  <style>
+    :root {
+      --primary: #0f172a;
+      --primary-blue: #1e2a5a;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-green: #10b981;
+      --bg-body: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+
+      --badge-vencido-bg: #fde8e8;
+      --badge-vencido-text: #9b1c1c;
+      --badge-proximo-bg: #fef08a;
+      --badge-proximo-text: #713f12;
+      --badge-vigente-bg: #def7ec;
+      --badge-vigente-text: #03543f;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* --- HEADER / NAVBAR --- */
+    .navbar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.8rem 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo-img {
+      height: 40px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.8rem;
+      align-items: center;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: color 0.2s ease;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .nav-link:hover {
+      color: var(--primary-blue);
+    }
+
+    .nav-link.active {
+      color: var(--primary-blue);
+      font-weight: 700;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 4px;
+    }
+
+    /* --- CONTENEDOR PRINCIPAL --- */
+    .container {
+      max-width: 1100px;
+      width: 90%;
+      margin: 2.5rem auto;
+      flex: 1;
+    }
+
+    /* Card Principal */
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+      padding: 2rem 2.2rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border-color);
+    }
+
+    .card-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--primary-blue);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Formularios */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+      align-items: end;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+    }
+
+    input[type="text"],
+    select {
+      padding: 0.75rem 1rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      outline: none;
+      background-color: #fff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      color: var(--text-main);
+    }
+
+    input[type="text"]:focus,
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .btn-submit {
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s ease;
+      width: fit-content;
+      margin-top: 1.25rem;
+      height: 45px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-submit:hover {
+      background-color: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Tarjetas KPI de Resumen */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .kpi-card {
+      background: var(--card-bg);
+      border-radius: 14px;
+      padding: 1.25rem;
+      text-align: center;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    }
+
+    .kpi-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+
+    .kpi-value {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--primary-blue);
+      word-break: break-word;
+    }
+
+    /* Pestañas de Estado (Tabs) */
+    .tabs-container {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: #edf2f7;
+      border: none;
+      padding: 0.5rem 1.25rem;
+      border-radius: 20px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--primary-blue);
+      color: #ffffff;
+    }
+
+    /* Tabla */
+    .table-container {
+      overflow-x: auto;
+      border-radius: 12px;
+      padding: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background-color: var(--primary-blue);
+      color: #ffffff;
+      font-weight: 600;
+      padding: 1rem;
+    }
+
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      background-color: #ffffff;
+    }
+
+    /* Badges de Estado */
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .badge-vencido {
+      background: var(--badge-vencido-bg);
+      color: var(--badge-vencido-text);
+    }
+
+    .badge-proximo {
+      background: var(--badge-proximo-bg);
+      color: var(--badge-proximo-text);
+    }
+
+    .badge-vigente {
+      background: var(--badge-vigente-bg);
+      color: var(--badge-vigente-text);
+    }
+
+    /* Resumen por Mes */
+    .summary-section {
+      margin-top: 1.5rem;
+    }
+
+    .summary-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+      margin-bottom: 0.75rem;
+    }
+
+    .message {
+      margin: 1rem 0;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER PRINCIPAL CON LOGO Y NAVEGACIÓN -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="dashboard.html">
+        <img src="assets/img/logo.png" alt="Calendario Tributario Colombia" class="logo-img">
+      </a>
+      <nav class="nav-links" id="nav-links">
+        <a href="dashboard.html" class="nav-link active">Consulta</a>
+        <a href="recursos.html" class="nav-link">Recursos</a>
+        <a href="precios.html" class="nav-link">Planes</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- CONTENEDOR PRINCIPAL -->
+  <main class="container">
+
+    <!-- BANNER DE BIENVENIDA / ONBOARDING (ESTADOS VACÍOS) -->
+    <div id="onboarding-banner" style="display: none; background: #eefdf6; border: 1px solid #10b981; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+      <h3 style="color: #0f172a; margin-bottom: 0.5rem;">¡Hola! 👋 Bienvenido a TributoApp</h3>
+      <p style="color: #475569; margin-bottom: 1rem;">Para empezar a recibir alertas precisas y optimizar tus consultas, configura tu NIT y tus datos fiscales.</p>
+      <a href="#form-consulta" style="background: #10b981; color: white; padding: 0.6rem 1.2rem; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">Completar mi perfil ahora</a>
+    </div>
+
+    <div id="banner-alertas" style="display:none; background:#fef08a; border:1px solid #f0c419; border-radius:10px; padding:1rem 1.25rem; margin-bottom:1.5rem; font-weight:600; color:#713f12;"></div>
+    <div class="card" id="card-alertas" style="display:none;">
+      <div class="card-title" style="font-size:1.1rem;">🔔 Alertas automáticas</div>
+      <p style="color:#64748b; font-size:0.9rem; margin-bottom:1rem;">Guarda tu NIT principal para que te avisemos aquí cuando algo esté por vencer.</p>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>NIT a seguir</label>
+          <input type="text" id="nit-seguimiento">
+        </div>
+        <div class="form-group">
+          <label>Tipo Contribuyente</label>
+          <select id="tipo-seguimiento">
+            <option value="Gran Contribuyente">Gran Contribuyente</option>
+            <option value="Responsable de IVA Bimestral">Responsable de IVA Bimestral</option>
+            <option value="Responsable de IVA Cuatrimestral">Responsable de IVA Cuatrimestral</option>
+            <option value="No responsable de IVA">No responsable de IVA</option>
+          </select>
+        </div>
+      </div>
+      <button type="button" id="btn-guardar-seguimiento" class="btn-submit">Guardar</button>
+    </div>
+
+    <!-- Formulario de Consulta -->
+    <section class="card">
+      <h2 class="card-title">Consultar Calendario Tributario</h2>
+
+      <form id="form-consulta">
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="nit">NIT *</label>
+            <input type="text" id="nit" placeholder="901.260.460-0" value="901.260.460-0" required autocomplete="off">
+          </div>
+
+          <div class="form-group">
+            <label for="tipo">Tipo Contribuyente *</label>
+            <select id="tipo" required>
+              <option value="Gran Contribuyente" selected>Gran Contribuyente</option>
+              <option value="Responsable de IVA Bimestral">Responsable de IVA Bimestral</option>
+              <option value="Responsable de IVA Cuatrimestral">Responsable de IVA Cuatrimestral</option>
+              <option value="No responsable de IVA">No responsable de IVA</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="mes">Mes</label>
+            <select id="mes">
+              <option value="todos" selected>Todos los meses</option>
+              <option value="1">Enero</option>
+              <option value="2">Febrero</option>
+              <option value="3">Marzo</option>
+              <option value="4">Abril</option>
+              <option value="5">Mayo</option>
+              <option value="6">Junio</option>
+              <option value="7">Julio</option>
+              <option value="8">Agosto</option>
+              <option value="9">Septiembre</option>
+              <option value="10">Octubre</option>
+              <option value="11">Noviembre</option>
+              <option value="12">Diciembre</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="anio">Año</label>
+            <select id="anio">
+              <option value="2026" selected>2026</option>
+              <option value="2025">2025</option>
+              <option value="2027">2027</option>
+            </select>
+          </div>
+
+        </div>
+
+        <button type="submit" id="btn-consultar" class="btn-submit">Consultar</button>
+      </form>
+    </section>
+
+    <p id="mensaje" class="message"></p>
+
+    <!-- Sección de Resultados -->
+    <div id="seccion-resultados" style="display: none;">
+
+      <!-- KPIs / Tarjetas de Resumen -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">NIT</div>
+          <div class="kpi-value" id="kpi-nit">-</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Tipo Contribuyente</div>
+          <div class="kpi-value" id="kpi-tipo">-</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Total Obligaciones</div>
+          <div class="kpi-value" id="kpi-total">0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Último dígito NIT</div>
+          <div class="kpi-value" id="kpi-digito">0</div>
+        </div>
+      </div>
+
+      <!-- Pestañas de Estado -->
+      <div class="tabs-container">
+        <button class="tab-btn active" data-status="todos">Todos (<span id="count-todos">0</span>)</button>
+        <button class="tab-btn" data-status="vigentes">Vigentes (<span id="count-vigentes">0</span>)</button>
+        <button class="tab-btn" data-status="proximos">Próximos (<span id="count-proximos">0</span>)</button>
+        <button class="tab-btn" data-status="vencidos">Vencidos (<span id="count-vencidos">0</span>)</button>
+      </div>
+
+      <!-- Tabla de Obligaciones -->
+      <div class="card table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Impuesto</th>
+              <th>Período</th>
+              <th>Frecuencia</th>
+              <th>Institución</th>
+              <th>Fecha Límite</th>
+              <th>Días</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpo-resultados"></tbody>
+        </table>
+      </div>
+
+      <!-- Resumen por Mes -->
+      <div class="summary-section card" id="seccion-resumen-mes">
+        <h3 class="summary-title">Resumen por Mes</h3>
+        <div id="contenido-resumen-mes"></div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- SCRIPTS Y LÓGICA -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseClient.js"></script>
+  <script src="verificarSesion.js"></script>
+  <script>
+    // Nombres de los meses
+    const NOMBRES_MESES = [
+      "", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ];
+
+    // Matriz de Reglas Tributarias
+    const REGLAS_CONTRIBUYENTE = {
+      "Gran Contribuyente": [
+        { impuesto: "retefuente", frecuencia: "mensual" },
+        { impuesto: "iva", frecuencia: "bimestral" },
+        { impuesto: "ica", frecuencia: "mensual" },
+        { impuesto: "renta", frecuencia: "anual" }
+      ],
+      "Responsable de IVA Bimestral": [
+        { impuesto: "retefuente", frecuencia: "mensual" },
+        { impuesto: "iva", frecuencia: "bimestral" },
+        { impuesto: "ica", frecuencia: "bimestral" },
+        { impuesto: "renta", frecuencia: "anual" }
+      ],
+      "Responsable de IVA Cuatrimestral": [
+        { impuesto: "retefuente", frecuencia: "mensual" },
+        { impuesto: "iva", frecuencia: "cuatrimestral" },
+        { impuesto: "ica", frecuencia: "bimestral" },
+        { impuesto: "renta", frecuencia: "anual" }
+      ],
+      "No responsable de IVA": [
+        { impuesto: "renta", frecuencia: "anual" },
+        { impuesto: "ica", frecuencia: "bimestral" }
+      ]
+    };
+
+    // Estado local de los datos de la consulta
+    let obligacionesProcesadas = [];
+    let filtroEstadoActual = "todos";
+
+    // Elementos del DOM
+    const form = document.getElementById('form-consulta');
+    const btnConsultar = document.getElementById('btn-consultar');
+    const mensaje = document.getElementById('mensaje');
+    const seccionResultados = document.getElementById('seccion-resultados');
+    const cuerpo = document.getElementById('cuerpo-resultados');
+    const contenidoResumenMes = document.getElementById('contenido-resumen-mes');
+
+    // Parse de fechas sin desfasar zonas horarias
+    function parseFechaLocal(fechaStr) {
+      const partes = fechaStr.split('-');
+      if (partes.length !== 3) return new Date(fechaStr);
+      return new Date(parseInt(partes[0], 10), parseInt(partes[1], 10) - 1, parseInt(partes[2], 10));
+    }
+
+    function crearCelda(texto) {
+      const td = document.createElement('td');
+      td.textContent = texto !== undefined && texto !== null ? texto : '';
+      return td;
+    }
+
+    function cumpleRegla(fila, tipoSeleccionado) {
+      const reglas = REGLAS_CONTRIBUYENTE[tipoSeleccionado];
+      if (!reglas) return true;
+
+      const impFila = (fila.impuesto || '').toLowerCase();
+      const frecFila = (fila.frecuencia || '').toLowerCase();
+
+      return reglas.some(regla => {
+        return impFila.includes(regla.impuesto) && frecFila.includes(regla.frecuencia);
+      });
+    }
+
+    // Consulta e integración de datos
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      mensaje.textContent = "Buscando información...";
+      seccionResultados.style.display = "none";
+      btnConsultar.disabled = true;
+
+      try {
+        const nitCrudo = document.getElementById('nit').value;
+        const tipoSeleccionado = document.getElementById('tipo').value;
+        const mesSeleccionado = document.getElementById('mes').value;
+        const anioSeleccionado = parseInt(document.getElementById('anio').value, 10);
+
+        const nitLimpio = nitCrudo.split('-')[0].replace(/\D/g, '');
+        if (!nitLimpio) {
+          mensaje.textContent = "Por favor, ingresa un NIT válido.";
+          return;
+        }
+
+        const grupo = parseInt(nitLimpio.slice(-1), 10);
+
+        // 1. Consulta a Supabase
+        const { data, error } = await supabaseClient
+          .from('calendario_tributario')
+          .select('*')
+          .eq('grupo_nit', grupo)
+          .eq('anio_gravable', anioSeleccionado)
+          .order('fecha_vencimiento', { ascending: true });
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+          mensaje.textContent = `No hay datos registrados en el calendario para el grupo NIT ${grupo} (${anioSeleccionado}).`;
+          return;
+        }
+
+        // 2. Filtrado por Tipo de Contribuyente
+        let filtrados = data.filter(fila => {
+          if (fila.tipo_contribuyente === tipoSeleccionado) return true;
+          return cumpleRegla(fila, tipoSeleccionado);
+        });
+
+        // 3. Filtrado por Mes (si seleccionó uno específico)
+        if (mesSeleccionado !== "todos") {
+          const numMes = parseInt(mesSeleccionado, 10);
+          filtrados = filtrados.filter(fila => {
+            const fecha = parseFechaLocal(fila.fecha_vencimiento);
+            return (fecha.getMonth() + 1) === numMes;
+          });
+        }
+
+        if (filtrados.length === 0) {
+          mensaje.textContent = `No se encontraron obligaciones tributarias para las opciones seleccionadas.`;
+          return;
+        }
+
+        mensaje.textContent = "";
+
+        // 4. Procesamiento de Días y Estados
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+
+        obligacionesProcesadas = filtrados.map(fila => {
+          const vencimiento = parseFechaLocal(fila.fecha_vencimiento);
+          vencimiento.setHours(0, 0, 0, 0);
+
+          const diferencia = Math.round((vencimiento - hoy) / (1000 * 60 * 60 * 24));
+          let categoriaEstado = "vigentes";
+          let textoEstado = "Vigente";
+          let badgeClass = "badge-vigente";
+
+          if (diferencia < 0) {
+            categoriaEstado = "vencidos";
+            textoEstado = "Vencido";
+            badgeClass = "badge-vencido";
+          } else if (diferencia <= 5) { // Próximos a vencer (entre 0 y 5 días)
+            categoriaEstado = "proximos";
+            textoEstado = "Próximo a vencer";
+            badgeClass = "badge-proximo";
+          }
+
+          return {
+            ...fila,
+            diasRestantes: diferencia,
+            categoriaEstado,
+            textoEstado,
+            badgeClass,
+            mesNum: vencimiento.getMonth() + 1
+          };
+        });
+
+        // 5. Actualizar KPIs de Resumen
+        document.getElementById('kpi-nit').textContent = nitLimpio;
+        document.getElementById('kpi-tipo').textContent = tipoSeleccionado;
+        document.getElementById('kpi-total').textContent = obligacionesProcesadas.length;
+        document.getElementById('kpi-digito').textContent = grupo;
+
+        // 6. Renderizar Pestañas y Tabla
+        actualizarContadoresTabs();
+        renderizarTabla();
+        renderizarResumenMes(mesSeleccionado);
+
+        seccionResultados.style.display = "block";
+
+      } catch (err) {
+        console.error("Error al consultar:", err);
+        mensaje.textContent = "Error al obtener la información: " + (err.message || err);
+      } finally {
+        btnConsultar.disabled = false;
+      }
+    });
+
+    // Actualiza los badges contadores de las pestañas
+    function actualizarContadoresTabs() {
+      const counts = {
+        todos: obligacionesProcesadas.length,
+        vigentes: obligacionesProcesadas.filter(o => o.categoriaEstado === "vigentes").length,
+        proximos: obligacionesProcesadas.filter(o => o.categoriaEstado === "proximos").length,
+        vencidos: obligacionesProcesadas.filter(o => o.categoriaEstado === "vencidos").length
+      };
+
+      document.getElementById('count-todos').textContent = counts.todos;
+      document.getElementById('count-vigentes').textContent = counts.vigentes;
+      document.getElementById('count-proximos').textContent = counts.proximos;
+      document.getElementById('count-vencidos').textContent = counts.vencidos;
+    }
+
+    // Renderizado dinámico de la tabla según el tab activo
+    function renderizarTabla() {
+      cuerpo.innerHTML = "";
+
+      const lista = filtroEstadoActual === "todos"
+        ? obligacionesProcesadas
+        : obligacionesProcesadas.filter(o => o.categoriaEstado === filtroEstadoActual);
+
+      if (lista.length === 0) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 7;
+        td.style.textAlign = "center";
+        td.style.color = "var(--text-muted)";
+        td.textContent = "No hay obligaciones en esta categoría.";
+        tr.appendChild(td);
+        cuerpo.appendChild(tr);
+        return;
+      }
+
+      lista.forEach(fila => {
+        const tr = document.createElement('tr');
+
+        tr.appendChild(crearCelda(fila.impuesto));
+        tr.appendChild(crearCelda(fila.periodo));
+        tr.appendChild(crearCelda(fila.frecuencia));
+        tr.appendChild(crearCelda(fila.sujeto_activo || fila.institucion || 'DIAN / Alcaldía'));
+        tr.appendChild(crearCelda(fila.fecha_vencimiento));
+        tr.appendChild(crearCelda(`${Math.abs(fila.diasRestantes)} días`));
+
+        // Celda con Badge
+        const tdEstado = document.createElement('td');
+        const spanBadge = document.createElement('span');
+        spanBadge.className = `badge ${fila.badgeClass}`;
+        spanBadge.textContent = fila.textoEstado;
+        tdEstado.appendChild(spanBadge);
+        tr.appendChild(tdEstado);
+
+        cuerpo.appendChild(tr);
+      });
+    }
+
+    // Event Listener para cambiar de pestaña (Todos / Vigentes / Próximos / Vencidos)
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        filtroEstadoActual = btn.getAttribute('data-status');
+        renderizarTabla();
+      });
+    });
+
+    // Renderizar sección Resumen por Mes
+    function renderizarResumenMes(mesSeleccionado) {
+      contenidoResumenMes.innerHTML = "";
+
+      let mesNombre = "General";
+      if (mesSeleccionado !== "todos") {
+        mesNombre = NOMBRES_MESES[parseInt(mesSeleccionado, 10)];
+      } else if (obligacionesProcesadas.length > 0) {
+        mesNombre = NOMBRES_MESES[obligacionesProcesadas[0].mesNum];
+      }
+
+      const total = obligacionesProcesadas.length;
+      const vencidos = obligacionesProcesadas.filter(o => o.categoriaEstado === "vencidos").length;
+
+      const html = `
+        <div style="font-size: 1rem; font-weight: 700; color: var(--primary-blue); margin-bottom: 0.2rem;">
+          ${mesNombre}
+        </div>
+        <div style="font-size: 0.9rem; color: var(--text-muted);">
+          Total: ${total} obligaciones<br>
+          Vencidos: ${vencidos}
+        </div>
+      `;
+      contenidoResumenMes.innerHTML = html;
+    }
+
+    // Renderizar opción Admin y Botón de Cerrar Sesión en la Navegación
+    async function renderizarNavegacion() {
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        const nav = document.getElementById('nav-links');
+
+        if (session && nav) {
+          // 1. Validar si el usuario es administrador para mostrar la pestaña Admin
+          const { data: perfil } = await supabaseClient
+            .from('perfiles')
+            .select('rol')
+            .eq('id', session.user.id)
+            .single();
+
+          if (perfil && perfil.rol === 'admin') {
+            const adminLink = document.createElement('a');
+            adminLink.href = 'admin.html';
+            adminLink.className = 'nav-link';
+            adminLink.textContent = 'Admin';
+            nav.appendChild(adminLink);
+          }
+
+          // 2. Añadir botón funcional de Cerrar Sesión
+          const logoutBtn = document.createElement('button');
+          logoutBtn.className = 'nav-link';
+          logoutBtn.textContent = 'Cerrar Sesión';
+          logoutBtn.addEventListener('click', async () => {
+            await supabaseClient.auth.signOut();
+            window.location.href = 'index.html';
+          });
+          nav.appendChild(logoutBtn);
+        }
+      } catch (err) {
+        console.log("Sesión no detectada o error al cargar perfil:", err);
+      }
+    }
+
+    // Inicializar y revisar alertas automáticas y estados vacíos (Onboarding)
+    async function inicializarAlertas() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) return;
+
+      const { data: perfil } = await supabaseClient
+        .from('perfiles')
+        .select('plan, rol, nit_seguimiento, tipo_seguimiento')
+        .eq('id', session.user.id)
+        .single();
+
+      // Validación para el Estado Vacío (Onboarding)
+      if (perfil && (!perfil.nit_seguimiento)) {
+        document.getElementById('onboarding-banner').style.display = 'block';
+      }
+
+      const tieneAlertas = perfil && (perfil.plan === 'profesional' || perfil.plan === 'empresarial' || perfil.rol === 'admin');
+      if (!tieneAlertas) return;
+
+      document.getElementById('card-alertas').style.display = 'block';
+      if (perfil.nit_seguimiento) document.getElementById('nit-seguimiento').value = perfil.nit_seguimiento;
+      if (perfil.tipo_seguimiento) document.getElementById('tipo-seguimiento').value = perfil.tipo_seguimiento;
+
+      document.getElementById('btn-guardar-seguimiento').addEventListener('click', async () => {
+        const nit = document.getElementById('nit-seguimiento').value;
+        const tipo = document.getElementById('tipo-seguimiento').value;
+        await supabaseClient.from('perfiles').update({ nit_seguimiento: nit, tipo_seguimiento: tipo }).eq('id', session.user.id);
+        
+        // Ocultar banner de onboarding al guardar
+        document.getElementById('onboarding-banner').style.display = 'none';
+        revisarAlertas(nit, tipo);
+      });
+
+      if (perfil.nit_seguimiento) revisarAlertas(perfil.nit_seguimiento, perfil.tipo_seguimiento);
+    }
+
+    async function revisarAlertas(nitCrudo, tipo) {
+      const nitLimpio = nitCrudo.split('-')[0].replace(/\D/g, '');
+      if (!nitLimpio) return;
+      const grupo = parseInt(nitLimpio.slice(-1), 10);
+      const anioActual = new Date().getFullYear();
+
+      const { data, error } = await supabaseClient
+        .from('calendario_tributario')
+        .select('*')
+        .eq('grupo_nit', grupo)
+        .eq('anio_gravable', anioActual);
+
+      if (error || !data) return;
+
+      const filtrados = data.filter(fila => cumpleRegla(fila, tipo));
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+
+      let vencidos = 0, proximos = 0;
+      filtrados.forEach(fila => {
+        const vencimiento = parseFechaLocal(fila.fecha_vencimiento);
+        vencimiento.setHours(0, 0, 0, 0);
+        const dif = Math.round((vencimiento - hoy) / (1000 * 60 * 60 * 24));
+        if (dif < 0) vencidos++;
+        else if (dif <= 5) proximos++;
+      });
+
+      const banner = document.getElementById('banner-alertas');
+      if (vencidos > 0 || proximos > 0) {
+        banner.style.display = 'block';
+        banner.textContent = `⚠️ Tu NIT ${nitLimpio}: ${vencidos} obligación(es) vencida(s) y ${proximos} por vencer en los próximos 5 días.`;
+      } else {
+        banner.style.display = 'none';
+      }
+    }
+
+    renderizarNavegacion();
+    inicializarAlertas();
+  </script>
+</body>
+
+</html>

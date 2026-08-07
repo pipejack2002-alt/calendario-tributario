@@ -1,0 +1,12 @@
+name: Enviar Alertas Tributarias Diarias
+on:
+  schedule:
+    - cron: '0 8 * * *' # Se ejecuta todos los días a las 8:00 AM
+jobs:
+  run-alertas:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Llamar a la Edge Function de Supabase
+        run: |
+          curl -X POST https://lehtlxevhzhxohhvjfsf.supabase.co/functions/v1/super-handler \
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" 

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recursos Empresariales - TributoApp S.A.S.</title>
+  
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+
+  <style>
+    :root {
+      --primary: #0f172a;
+      --primary-blue: #1e2a5a;
+      --accent: #10b981;
+      --accent-hover: #0e9f6e;
+      --accent-green: #10b981;
+      --bg-body: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --danger: #ef4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background: var(--bg-body); min-height: 100vh; display: flex; flex-direction: column; color: var(--text-main); }
+
+    /* --- HEADER / NAVBAR --- */
+    .navbar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.8rem 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo-img {
+      height: 40px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.8rem;
+      align-items: center;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: color 0.25s ease;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .nav-link:hover { color: var(--primary-blue); }
+    .nav-link.active { color: var(--primary-blue); font-weight: 700; border-bottom: 2px solid var(--accent); padding-bottom: 4px; }
+
+    /* --- CONTENEDOR PRINCIPAL --- */
+    .container { max-width: 900px; width: 90%; margin: 2.5rem auto; flex: 1; }
+    .card { background: #fff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); padding: 2rem 2.2rem; border: 1px solid var(--border-color); margin-bottom: 1.5rem; }
+    .card-title { font-size: 1.4rem; font-weight: 800; color: var(--primary-blue); margin-bottom: 0.5rem; }
+    .card-sub { color: var(--text-muted); margin-bottom: 1.5rem; }
+    .recurso-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem; }
+    .recurso-nombre { font-weight: 700; color: var(--primary-blue); }
+    .recurso-desc { font-size: 0.85rem; color: var(--text-muted); }
+    .btn-descargar { background: var(--accent); color: #fff; border: none; padding: 0.6rem 1.25rem; border-radius: 8px; font-weight: 700; cursor: pointer; text-decoration: none; }
+    .btn-descargar:hover { background: var(--accent-hover); }
+    .upgrade-box { text-align: center; padding: 2.5rem 1.5rem; }
+    .upgrade-box p { color: var(--text-muted); margin-bottom: 1.5rem; }
+    .btn-upgrade { background: var(--primary-blue); color: #fff; padding: 0.8rem 2rem; border-radius: 10px; font-weight: 700; text-decoration: none; display: inline-block; }
+    #mensaje { text-align: center; color: var(--text-muted); margin-top: 1rem; }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER / NAVBAR -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="dashboard.html">
+        <img src="assets/img/logo.png" alt="Calendario Tributario Colombia" class="logo-img">
+      </a>
+      <nav class="nav-links" id="nav-links">
+        <a href="dashboard.html" class="nav-link">Consulta</a>
+        <a href="recursos.html" class="nav-link active">Recursos</a>
+        <a href="precios.html" class="nav-link">Planes</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="card" id="card-contenido">
+      <p id="mensaje">Verificando tu plan...</p>
+    </div>
+  </div>
+
+  <!-- SCRIPTS Y LÓGICA -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseClient.js"></script>
+  <script src="verificarSesion.js"></script>
+  <script>
+    const RECURSOS = [
+      { 
+        nombre: "Conciliación DIAN vs Contabilidad", 
+        descripcion: "Plantilla Power BI oficial para conciliación fiscal y facturación electrónica", 
+        archivo: "CONCILIACION DIAN VS CONTABILIDAD.pbix" 
+      },
+      { 
+        nombre: "Conciliación de Anticipos", 
+        descripcion: "Plantilla Power BI oficial para control y conciliación de anticipos", 
+        archivo: "CONCILIACION ANTICIPOS.pbix" 
+      }
+    ];
+
+    const BUCKET = "recursos-empresariales";
+    const contenedor = document.getElementById('card-contenido');
+
+    (async () => {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) { window.location.href = "login.html"; return; }
+
+      const { data: perfil } = await supabaseClient
+        .from('perfiles')
+        .select('plan, rol')
+        .eq('id', session.user.id)
+        .single();
+
+      const tieneAcceso = perfil && (perfil.plan === 'empresarial' || perfil.rol === 'admin');
+
+      if (!tieneAcceso) {
+        contenedor.innerHTML = `
+          <div class="upgrade-box">
+            <div class="card-title">Recursos exclusivos del plan Empresarial</div>
+            <p>Accede a nuestras plantillas de Power BI para conciliación de facturas DIAN y anticipos, actualizando tu plan.</p>
+            <a href="precios.html" class="btn-upgrade">Ver planes</a>
+          </div>`;
+        return;
+      }
+
+      contenedor.innerHTML = `
+        <div class="card-title">Recursos Empresariales</div>
+        <p class="card-sub">Descarga tus plantillas de Power BI</p>
+        <div id="lista-recursos"></div>`;
+
+      const lista = document.getElementById('lista-recursos');
+
+      for (const recurso of RECURSOS) {
+        // Genera un enlace firmado seguro de 300 segundos (5 minutos) exclusivo para usuarios autenticados con acceso
+        const { data, error } = await supabaseClient.storage
+          .from(BUCKET)
+          .createSignedUrl(recurso.archivo, 300);
+
+        const div = document.createElement('div');
+        div.className = 'recurso-item';
+
+        if (error || !data) {
+          div.innerHTML = `
+            <div>
+              <div class="recurso-nombre">${recurso.nombre}</div>
+              <div class="recurso-desc" style="color: var(--danger);">No disponible temporalmente</div>
+            </div>`;
+        } else {
+          div.innerHTML = `
+            <div>
+              <div class="recurso-nombre">${recurso.nombre}</div>
+              <div class="recurso-desc">${recurso.descripcion}</div>
+            </div>
+            <a href="${data.signedUrl}" class="btn-descargar" download>Descargar</a>`;
+        }
+        lista.appendChild(div);
+      }
+    })();
+
+    // Renderizar enlace Admin y Botón de Cerrar Sesión en la Navegación de forma dinámica
+    async function renderizarNavegacionRecursos() {
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        const nav = document.getElementById('nav-links');
+
+        if (session && nav) {
+          const { data: per } = await supabaseClient
+            .from('perfiles')
+            .select('rol')
+            .eq('id', session.user.id)
+            .single();
+
+          if (per && per.rol === 'admin') {
+            const adminLink = document.createElement('a');
+            adminLink.href = 'admin.html';
+            adminLink.className = 'nav-link';
+            adminLink.textContent = 'Admin';
+            nav.appendChild(adminLink);
+          }
+
+          const logoutBtn = document.createElement('button');
+          logoutBtn.className = 'nav-link';
+          logoutBtn.textContent = 'Cerrar Sesión';
+          logoutBtn.addEventListener('click', async () => {
+            await supabaseClient.auth.signOut();
+            window.location.href = 'index.html';
+          });
+          nav.appendChild(logoutBtn);
+        }
+      } catch (err) {
+        console.log("Error al cargar sesión en navegación de recursos:", err);
+      }
+    }
+    renderizarNavegacionRecursos();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planes y Precios - TributoApp S.A.S.</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+  <!-- Iconos de Redes Sociales -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #0f172a;
+      --primary-blue: #1e2a5a;
+      --accent: #10b981;
+      --accent-hover: #0e9f6e;
+      --accent-green: #10b981;
+      --bg-body: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --danger: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+    }
+
+    /* --- HEADER / NAVBAR --- */
+    .navbar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.8rem 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-logo {
+      font-size: 1.25rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--primary-blue);
+      text-decoration: none;
+    }
+
+    .brand-logo img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 4px;
+      border-radius: 8px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.8rem;
+      align-items: center;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: color 0.2s ease;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .nav-link:hover {
+      color: var(--primary-blue);
+    }
+
+    .nav-link.active {
+      color: var(--primary-blue);
+      font-weight: 700;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 4px;
+    }
+
+    /* --- CONTENEDOR PRINCIPAL --- */
+    .container {
+      max-width: 1100px;
+      width: 90%;
+      margin: 0 auto;
+      flex: 1;
+    }
+
+    .hero-sales {
+      text-align: center;
+      padding: 3rem 1.5rem 2rem 1.5rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .badge-trust {
+      display: inline-block;
+      background: rgba(16, 185, 129, 0.12);
+      color: #0e9f6e;
+      padding: 0.35rem 0.85rem;
+      border-radius: 50px;
+      font-size: 0.825rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    .hero-sales h1 {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--primary-blue);
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.5px;
+    }
+
+    .hero-sales p {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+    }
+
+    .pricing-container {
+      max-width: 1100px;
+      margin: 1.5rem auto 3rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .planes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      align-items: stretch;
+    }
+
+    .plan-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 2.25rem 1.75rem;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+
+    .plan-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .plan-card.destacado {
+      border: 2px solid var(--accent);
+      box-shadow: 0 8px 30px rgba(16, 185, 129, 0.15);
+    }
+
+    .badge-popular {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #fff;
+      padding: 0.25rem 0.85rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .plan-nombre {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--primary-blue);
+      margin-bottom: 0.25rem;
+    }
+
+    .plan-sub {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+    }
+
+    .plan-precio-box {
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .plan-precio {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--primary-blue);
+    }
+
+    .plan-frecuencia {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .plan-features {
+      list-style: none;
+      margin-bottom: 2rem;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 1.25rem;
+    }
+
+    .plan-features li {
+      font-size: 0.925rem;
+      color: #334155;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .plan-features li::before {
+      content: "✓";
+      color: var(--accent-green);
+      font-weight: 900;
+      font-size: 1.1rem;
+    }
+
+    .btn-plan {
+      width: 100%;
+      background: var(--primary-blue);
+      color: #ffffff;
+      border: none;
+      padding: 0.85rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      text-align: center;
+      text-decoration: none;
+      display: block;
+    }
+
+    .btn-plan:hover {
+      background: #141d3f;
+    }
+
+    .btn-plan.btn-accent {
+      background: var(--accent);
+    }
+
+    .btn-plan.btn-accent:hover {
+      background: var(--accent-hover);
+    }
+
+    /* --- MODAL DE PAGO PASARELA COLOMBIA --- */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      width: 90%;
+      max-width: 480px;
+      border-radius: 20px;
+      padding: 2.2rem;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      position: relative;
+      transform: translateY(20px);
+      transition: transform 0.25s ease;
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.25rem;
+      background: #f1f5f9;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+    }
+
+    .modal-close:hover {
+      background: #e2e8f0;
+      color: var(--primary);
+    }
+
+    .modal-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--primary-blue);
+      margin-bottom: 0.25rem;
+    }
+
+    .modal-sub {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .metodos-pago {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .metodo-card {
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      padding: 0.75rem 0.5rem;
+      text-align: center;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .metodo-card.selected {
+      border-color: var(--accent);
+      background: rgba(16, 185, 129, 0.05);
+      color: var(--primary-blue);
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.7rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.925rem;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    .resumen-pago {
+      background: #f8fafc;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border-color);
+    }
+
+    .resumen-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .resumen-row.total {
+      font-weight: 800;
+      color: var(--primary-blue);
+      font-size: 1.1rem;
+      border-top: 1px solid var(--border-color);
+      padding-top: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    #mensaje-pago {
+      margin-top: 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    /* FAQ y Buscador Inteligente */
+    .faq-section {
+      max-width: 800px;
+      margin: 2rem auto 4rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .faq-title {
+      text-align: center;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--primary-blue);
+      margin-bottom: 1.25rem;
+    }
+
+    .faq-search-box {
+      margin-bottom: 1.75rem;
+    }
+
+    .faq-search-input {
+      width: 100%;
+      padding: 0.85rem 1rem 0.85rem 2.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 0.95rem;
+      background: #ffffff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="%2364748b" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/></svg>') no-repeat 1rem center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+      transition: all 0.2s;
+    }
+
+    .faq-search-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    .faq-item {
+      background: var(--card-bg);
+      padding: 1.25rem 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      transition: opacity 0.2s ease;
+    }
+
+    .faq-question {
+      font-weight: 700;
+      color: var(--primary-blue);
+      margin-bottom: 0.35rem;
+    }
+
+    .faq-answer {
+      font-size: 0.925rem;
+      color: var(--text-muted);
+    }
+
+    .faq-sin-resultados {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 2rem;
+      font-size: 0.95rem;
+      display: none;
+    }
+
+    /* Testimonios (Prueba Social) */
+    .testimonials-section {
+      padding: 3rem 1.5rem;
+      background: #ffffff;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 2rem;
+    }
+
+    .testimonials-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .testimonial-card {
+      background: var(--bg-body);
+      padding: 1.75rem;
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+
+    /* Footer */
+    footer {
+      background: #0f172a;
+      color: #94a3b8;
+      padding: 3rem 1.5rem 1.5rem 1.5rem;
+      margin-top: auto;
+      font-size: 0.9rem;
+    }
+
+    .footer-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+    }
+
+    .footer-col h4 {
+      color: #ffffff;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .footer-col a {
+      color: #94a3b8;
+      text-decoration: none;
+      display: block;
+      margin-bottom: 0.5rem;
+      transition: color 0.2s;
+    }
+
+    .footer-col a:hover {
+      color: var(--accent);
+    }
+
+    .footer-bottom {
+      max-width: 1100px;
+      margin: 2rem auto 0 auto;
+      padding-top: 1.5rem;
+      border-top: 1px solid #334155;
+      text-align: center;
+      font-size: 0.8rem;
+    }
+
+    .whatsapp-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background-color: #25d366;
+      color: white;
+      border-radius: 50px;
+      padding: 12px 22px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 1000;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .whatsapp-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER / NAVBAR -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        <img src="assets/img/favicon.png" alt="TributoApp Logo"> TributoApp S.A.S.
+      </a>
+      <nav class="nav-links" id="nav-links">
+        <!-- Dinámico -->
+      </nav>
+    </div>
+  </header>
+
+  <!-- CONTENEDOR PRINCIPAL -->
+  <main class="container">
+
+    <section class="hero-sales">
+      <span class="badge-trust">⚡ Normativa DIAN Colombia</span>
+      <h1>Evita sanciones por vencimientos olvidados</h1>
+      <p>La herramienta ágil e inteligente diseñada para contadores, asesores tributarios y empresas que buscan control total sobre sus obligaciones.</p>
+    </section>
+
+    <!-- TARJETAS DE PRECIOS -->
+    <div class="pricing-container">
+      <div class="planes-grid" id="planes-grid">
+        <!-- Carga dinámica vía JavaScript -->
+      </div>
+    </div>
+
+    <!-- SECCIÓN FAQ CON BUSCADOR EN TIEMPO REAL -->
+    <section class="faq-section">
+      <h2 class="faq-title">Preguntas Frecuentes</h2>
+      
+      <!-- Input de Búsqueda Rápida -->
+      <div class="faq-search-box">
+        <input type="text" id="faq-search" class="faq-search-input" placeholder="Busca una duda (ej. DIAN, celular, dispositivos, Power BI)...">
+      </div>
+
+      <div id="faq-list">
+        <div class="faq-item" data-keywords="dián actualizados resoluciones decretos municipal">
+          <div class="faq-question">¿Los calendarios están actualizados con la DIAN?</div>
+          <div class="faq-answer">Sí, nuestra base de datos se sincroniza con los decretos y resoluciones oficiales de la DIAN y entes municipales.</div>
+        </div>
+        <div class="faq-item" data-keywords="celular movil smartphone app web optimizada computadores tablets">
+          <div class="faq-question">¿Puedo usar la plataforma desde mi celular?</div>
+          <div class="faq-answer">Por supuesto. La aplicación web está 100% optimizada para funcionar rápido en smartphones, tablets y computadores.</div>
+        </div>
+        <div class="faq-item" data-keywords="ayuda plan requerimiento corporativo whatsapp asesoramiento">
+          <div class="faq-question">¿Necesitas ayuda para elegir un plan o requerimiento corporativo?</div>
+          <div class="faq-answer">Escríbenos directamente por WhatsApp y nuestro equipo te asesorará en menos de 5 minutos.</div>
+        </div>
+        <div class="faq-item" data-keywords="power bi plantillas empresarial conciliacion facturas anticipos">
+          <div class="faq-question">¿Cómo descargo las plantillas de Power BI?</div>
+          <div class="faq-answer">Las plantillas para conciliación de facturas DIAN y anticipos están incluidas exclusivamente en el Plan Empresarial, con descarga directa desde tu sección de Recursos.</div>
+        </div>
+        <div class="faq-item" data-keywords="dispositivos activos limite cuentas contador firmas">
+          <div class="faq-question">¿Cuántos dispositivos puedo conectar por cuenta?</div>
+          <div class="faq-answer">Depende de tu plan seleccionado: el Plan Básico permite 1 dispositivo, el Profesional hasta 5 y el Plan Empresarial hasta 15 dispositivos activos simultáneamente.</div>
+        </div>
+      </div>
+
+      <div id="faq-sin-resultados" class="faq-sin-resultados">
+        No encontramos resultados para tu búsqueda. ¿Tienes una duda específica? Escríbenos por <a href="https://wa.me/573008635051?text=Hola,%20tengo%20una%20duda%20sobre%20los%20planes" target="_blank" style="color: var(--accent); font-weight:700; text-decoration:none;">WhatsApp</a> y te ayudamos de inmediato.
+      </div>
+    </section>
+
+  </main>
+
+  <!-- SECCIÓN TESTIMONIOS (PRUEBA SOCIAL) -->
+  <section class="testimonials-section">
+    <div class="testimonials-container">
+      <h2 style="text-align: center; color: var(--primary-blue); font-size: 1.6rem; font-weight: 800; margin-bottom: 2.5rem;">Lo que dicen nuestros usuarios</h2>
+      <div class="testimonials-grid">
+        
+        <!-- Testimonio 1 -->
+        <div class="testimonial-card">
+          <p style="color: var(--text-muted); font-style: italic; font-size: 0.925rem; margin-bottom: 1.25rem;">"TributoApp me salvó de una sanción por extemporaneidad el mes pasado. La interfaz es intuitiva y las alertas llegan a tiempo."</p>
+          <div style="font-weight: 800; color: var(--primary-blue);">Carlos M.</div>
+          <div style="font-size: 0.825rem; color: var(--text-muted);">Contador Público</div>
+        </div>
+
+        <!-- Testimonio 2 -->
+        <div class="testimonial-card">
+          <p style="color: var(--text-muted); font-style: italic; font-size: 0.925rem; margin-bottom: 1.25rem;">"Las plantillas de Power BI que vienen con el plan Empresarial automatizaron mi trabajo de conciliación. ¡Increíble valor!"</p>
+          <div style="font-weight: 800; color: var(--primary-blue);">Ana Lucía G.</div>
+          <div style="font-size: 0.825rem; color: var(--text-muted);">Asesora Tributaria</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL DE PAGO SEGURO COLOMBIA -->
+  <div class="modal-overlay" id="modal-pago">
+    <div class="modal-content">
+      <button class="modal-close" onclick="cerrarModalPago()">&times;</button>
+      <div class="modal-title">Pasarela de Pago Segura</div>
+      <div class="modal-sub" id="modal-sub-plan">Activación inmediata de suscripción</div>
+
+      <div class="metodos-pago">
+        <div class="metodo-card selected" onclick="seleccionarMetodo('pse', this)">PSE / Bancos</div>
+        <div class="metodo-card" onclick="seleccionarMetodo('nequi', this)">Nequi / Davi.</div>
+        <div class="metodo-card" onclick="seleccionarMetodo('tarjeta', this)">Tarjeta</div>
+      </div>
+
+      <div id="campos-dinamicos">
+        <!-- Dinámico según el método elegido -->
+      </div>
+
+      <div class="resumen-pago">
+        <div class="resumen-row">
+          <span id="resumen-nombre-plan">Plan Seleccionado</span>
+          <span id="resumen-precio-sub">-$</span>
+        </div>
+        <div class="resumen-row">
+          <span>IVA (19%)</span>
+          <span>Incluido</span>
+        </div>
+        <div class="resumen-row total">
+          <span>Total a Pagar</span>
+          <span id="resumen-total">$0 COP</span>
+        </div>
+      </div>
+
+      <button class="btn-plan btn-accent" id="btn-procesar-pago" onclick="procesarPago()">Pagar y Activar Plan</button>
+      <p id="mensaje-pago"></p>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-col">
+        <h4>TributoApp S.A.S.</h4>
+        <p>Calendario Tributario y alertas inteligentes de cumplimiento fiscal en Colombia.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Sede Presencial</h4>
+        <p>CRA 66 #50-154, Barrio El Prado<br>Barranquilla, Atlántico - Colombia<br>Atención: L-V 8:00am - 5:00pm</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navegación</h4>
+        <a href="precios.html">Planes y Precios</a>
+        <a href="login.html">Iniciar Sesión</a>
+        <a href="registro.html">Crear Cuenta</a>
+      </div>
+      <div class="footer-col">
+        <h4>Soporte</h4>
+        <a href="https://wa.me/573008635051" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp de Atención</a>
+        <a href="mailto:soporte@tributoapp.com"><i class="fas fa-envelope"></i> soporte@tributoapp.com</a>
+        <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+        <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 TributoApp S.A.S. Todos los derechos reservados. AB
+    </div>
+  </footer>
+
+  <!-- BOTÓN FLOTANTE WHATSAPP -->
+  <a href="https://wa.me/573008635051?text=Hola,%20quiero%20informaci%C3%B3n%20sobre%20los%20planes%20de%20TributoApp"
+    class="whatsapp-btn" target="_blank">
+    <i class="fab fa-whatsapp"></i> Asesoría Inmediata
+  </a>
+
+  <!-- SCRIPTS Y LÓGICA -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseClient.js"></script>
+  <script>
+    let planSeleccionadoActual = null;
+    let metodoPagoActual = 'pse';
+
+    // Lógica del Buscador en Tiempo Real de FAQ
+    const faqSearchInput = document.getElementById('faq-search');
+    if (faqSearchInput) {
+      faqSearchInput.addEventListener('input', (e) => {
+        const termino = e.target.value.toLowerCase().trim();
+        const items = document.querySelectorAll('.faq-item');
+        const mensajeVacio = document.getElementById('faq-sin-resultados');
+        let contadorVisibles = 0;
+
+        items.forEach(item => {
+          const textoPregunta = item.querySelector('.faq-question').textContent.toLowerCase();
+          const textoRespuesta = item.querySelector('.faq-answer').textContent.toLowerCase();
+          const palabrasClave = item.getAttribute('data-keywords') || '';
+
+          if (textoPregunta.includes(termino) || textoRespuesta.includes(termino) || palabrasClave.includes(termino)) {
+            item.style.display = 'block';
+            contadorVisibles++;
+          } else {
+            item.style.display = 'none';
+          }
+        });
+
+        if (contadorVisibles === 0) {
+          mensajeVacio.style.display = 'block';
+        } else {
+          mensajeVacio.style.display = 'none';
+        }
+      });
+    }
+
+    async function seleccionarPlan(planId, nombrePlan, precioPlan) {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      
+      if (!session) {
+        window.location.href = `registro.html?plan=${planId}`;
+        return;
+      }
+
+      planSeleccionadoActual = { id: planId, nombre: nombrePlan, precio: precioPlan };
+      
+      document.getElementById('modal-sub-plan').textContent = `Activando: ${nombrePlan}`;
+      document.getElementById('resumen-nombre-plan').textContent = nombrePlan;
+      document.getElementById('resumen-precio-sub').textContent = `$${Number(precioPlan).toLocaleString('es-CO')} COP`;
+      document.getElementById('resumen-total').textContent = `$${Number(precioPlan).toLocaleString('es-CO')} COP`;
+
+      renderizarCamposPago();
+      document.getElementById('modal-pago').classList.add('active');
+    }
+
+    function cerrarModalPago() {
+      document.getElementById('modal-pago').classList.remove('active');
+      document.getElementById('mensaje-pago').textContent = '';
+    }
+
+    function seleccionarMetodo(metodo, elemento) {
+      metodoPagoActual = metodo;
+      document.querySelectorAll('.metodo-card').forEach(c => c.classList.remove('selected'));
+      elemento.classList.add('selected');
+      renderizarCamposPago();
+    }
+
+    function renderizarCamposPago() {
+      const contenedor = document.getElementById('campos-dinamicos');
+      if (metodoPagoActual === 'pse') {
+        contenedor.innerHTML = `
+          <div class="form-group">
+            <label>Selecciona tu Banco (PSE)</label>
+            <select class="form-control" id="banco-pse">
+              <option value="bancolombia">Bancolombia</option>
+              <option value="davivienda">Davivienda</option>
+              <option value="nequi_banco">NEQUI (Financiera)</option>
+              <option value="bbva">BBVA Colombia</option>
+              <option value="bogota">Banco de Bogotá</option>
+              <option value="pse_otro">Otro banco nacional</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tipo de Persona</label>
+            <select class="form-control">
+              <option value="natural">Persona Natural</option>
+              <option value="juridica">Persona Jurídica</option>
+            </select>
+          </div>`;
+      } else if (metodoPagoActual === 'nequi') {
+        contenedor.innerHTML = `
+          <div class="form-group">
+            <label>Número Celular Nequi / Daviplata</label>
+            <input type="tel" class="form-control" placeholder="Ej: 300 123 4567" required>
+          </div>`;
+      } else {
+        contenedor.innerHTML = `
+          <div class="form-group">
+            <label>Número de Tarjeta</label>
+            <input type="text" class="form-control" placeholder="0000 0000 0000 0000" required>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <div class="form-group" style="flex:1;"><label>Vencimiento</label><input type="text" class="form-control" placeholder="MM/AA" required></div>
+            <div class="form-group" style="flex:1;"><label>CVV</label><input type="password" class="form-control" placeholder="123" maxlength="4" required></div>
+          </div>`;
+      }
+    }
+
+    async function procesarPago() {
+      const mensaje = document.getElementById('mensaje-pago');
+      mensaje.style.color = "var(--primary-blue)";
+      mensaje.textContent = "Procesando pago seguro con pasarela...";
+
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (!session) {
+          alert("La sesión ha expirado.");
+          window.location.href = "login.html";
+          return;
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        let slugPlan = 'basico';
+        const nombreLower = planSeleccionadoActual.nombre.toLowerCase();
+        if (nombreLower.includes('empresarial')) slugPlan = 'empresarial';
+        else if (nombreLower.includes('profesional')) slugPlan = 'profesional';
+
+        const { error: errorUpdate } = await supabaseClient
+          .from('perfiles')
+          .update({ plan: slugPlan })
+          .eq('id', session.user.id);
+
+        if (errorUpdate) throw errorUpdate;
+
+        mensaje.style.color = "var(--accent-green)";
+        mensaje.textContent = "¡Pago exitoso! Redirigiendo a tu panel...";
+
+        setTimeout(() => {
+          window.location.href = "dashboard.html";
+        }, 1500);
+
+      } catch (err) {
+        console.error("Error al procesar pago:", err);
+        mensaje.style.color = "var(--danger)";
+        mensaje.textContent = "Error al procesar el pago: " + (err.message || "Inténtalo de nuevo");
+      }
+    }
+
+    function obtenerCaracteristicasPlan(nombre) {
+      const n = (nombre || '').toLowerCase();
+      if (n.includes('básico') || n.includes('basico')) {
+        return `
+          <li>1 dispositivo activo</li>
+          <li>Consulta de calendario tributario nacional</li>
+          <li>Filtros dinámicos por NIT e impuesto</li>
+          <li>Soporte técnico directo</li>
+        `;
+      } else if (n.includes('profesional')) {
+        return `
+          <li>5 dispositivos activos</li>
+          <li>Alertas automáticas de vencimiento</li>
+          <li>Consulta de calendario tributario nacional</li>
+          <li>Filtros dinámicos por NIT e impuesto</li>
+        `;
+      } else if (n.includes('empresarial')) {
+        return `
+          <li>15 dispositivos activos</li>
+          <li>Alertas automáticas de vencimiento</li>
+          <li>Plantillas Power BI de conciliación incluidas</li>
+          <li>Soporte técnico prioritario</li>
+        `;
+      }
+      return `
+        <li>Consulta de calendario tributario nacional</li>
+        <li>Filtros dinámicos por NIT e impuesto</li>
+      `;
+    }
+
+    async function cargarPlanes() {
+      const grid = document.getElementById('planes-grid');
+
+      try {
+        const { data: planes, error } = await supabaseClient
+          .from('planes')
+          .select('*')
+          .order('precio', { ascending: true });
+
+        if (error || !planes || planes.length === 0) {
+          throw new Error("No hay planes en la base de datos, usando fallback.");
+        }
+
+        grid.innerHTML = "";
+        planes.forEach((plan, index) => {
+          const precioFormateado = Number(plan.precio).toLocaleString('es-CO');
+          const esDestacado = index === 1;
+
+          const div = document.createElement('div');
+          div.className = `plan-card ${esDestacado ? 'destacado' : ''}`;
+
+          div.innerHTML = `
+            ${esDestacado ? '<span class="badge-popular">Más Popular</span>' : ''}
+            <div>
+              <div class="plan-nombre">${plan.nombre}</div>
+              <div class="plan-sub">Acceso completo a la plataforma</div>
+              <div class="plan-precio-box">
+                <span class="plan-precio">$${precioFormateado}</span>
+                <span class="plan-frecuencia">COP / ${plan.frecuencia_pago || 'mes'}</span>
+              </div>
+              <ul class="plan-features">
+                ${obtenerCaracteristicasPlan(plan.nombre)}
+              </ul>
+            </div>
+            <button class="btn-plan ${esDestacado ? 'btn-accent' : ''}" onclick="seleccionarPlan('${plan.id}', '${plan.nombre}', ${plan.precio})">
+              ${esDestacado ? '¡Comenzar Ahora!' : 'Elegir Plan'}
+            </button>
+          `;
+          grid.appendChild(div);
+        });
+
+      } catch (err) {
+        grid.innerHTML = `
+          <div class="plan-card">
+            <div>
+              <div class="plan-nombre">Básico</div>
+              <div class="plan-sub">Para contadores independientes</div>
+              <div class="plan-precio-box">
+                <span class="plan-precio">$14.900</span>
+                <span class="plan-frecuencia">COP / Mensual</span>
+              </div>
+              <ul class="plan-features">
+                <li>1 dispositivo activo</li>
+                <li>Consulta de calendario tributario</li>
+                <li>Soporte técnico directo</li>
+              </ul>
+            </div>
+            <button class="btn-plan" onclick="seleccionarPlan('basico', 'Básico', 14900)">Elegir Plan</button>
+          </div>
+
+          <div class="plan-card destacado">
+            <span class="badge-popular">Más Popular</span>
+            <div>
+              <div class="plan-nombre">Profesional</div>
+              <div class="plan-sub">Para firmas contables en crecimiento</div>
+              <div class="plan-precio-box">
+                <span class="plan-precio">$24.900</span>
+                <span class="plan-frecuencia">COP / Mensual</span>
+              </div>
+              <ul class="plan-features">
+                <li>5 dispositivos activos</li>
+                <li>Alertas automáticas</li>
+                <li>Consulta de calendario tributario</li>
+              </ul>
+            </div>
+            <button class="btn-plan btn-accent" onclick="seleccionarPlan('pro', 'Profesional', 24900)">Elegir Plan</button>
+          </div>
+
+          <div class="plan-card">
+            <div>
+              <div class="plan-nombre">Empresarial</div>
+              <div class="plan-sub">Solución integral corporativa</div>
+              <div class="plan-precio-box">
+                <span class="plan-precio">$39.900</span>
+                <span class="plan-frecuencia">COP / Mensual</span>
+              </div>
+              <ul class="plan-features">
+                <li>15 dispositivos activos</li>
+                <li>Alertas automáticas</li>
+                <li>Plantillas Power BI incluidas</li>
+              </ul>
+            </div>
+            <button class="btn-plan" onclick="seleccionarPlan('empresarial', 'Empresarial', 39900)">Elegir Plan</button>
+          </div>
+        `;
+      }
+    }
+
+    async function renderizarNavegacion() {
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        const nav = document.getElementById('nav-links');
+        if (!nav) return;
+
+        nav.innerHTML = '';
+
+        if (session) {
+          nav.innerHTML += `<a href="dashboard.html" class="nav-link">Consulta</a>`;
+          nav.innerHTML += `<a href="recursos.html" class="nav-link">Recursos</a>`;
+          nav.innerHTML += `<a href="precios.html" class="nav-link active">Precios</a>`;
+
+          const { data: perfil } = await supabaseClient
+            .from('perfiles')
+            .select('rol')
+            .eq('id', session.user.id)
+            .single();
+
+          if (perfil && perfil.rol === 'admin') {
+            const adminLink = document.createElement('a');
+            adminLink.href = 'admin.html';
+            adminLink.className = 'nav-link';
+            adminLink.textContent = 'Admin';
+            nav.appendChild(adminLink);
+          }
+
+          const logoutBtn = document.createElement('button');
+          logoutBtn.className = 'nav-link';
+          logoutBtn.textContent = 'Cerrar Sesión';
+          logoutBtn.addEventListener('click', async () => {
+            await supabaseClient.auth.signOut();
+            window.location.href = 'index.html';
+          });
+          nav.appendChild(logoutBtn);
+
+        } else {
+          nav.innerHTML += `<a href="index.html#nosotros" class="nav-link">Sobre Nosotros</a>`;
+          nav.innerHTML += `<a href="precios.html" class="nav-link active">Precios</a>`;
+          nav.innerHTML += `<a href="login.html" class="nav-link">Iniciar Sesión</a>`;
+          nav.innerHTML += `<a href="registro.html" class="nav-link" style="color: var(--accent); font-weight: 700;">Crear Cuenta</a>`;
+        }
+
+      } catch (err) {
+        const nav = document.getElementById('nav-links');
+        if (nav) {
+          nav.innerHTML = `
+            <a href="index.html#nosotros" class="nav-link">Sobre Nosotros</a>
+            <a href="precios.html" class="nav-link active">Precios</a>
+            <a href="login.html" class="nav-link">Iniciar Sesión</a>
+            <a href="registro.html" class="nav-link" style="color: var(--accent); font-weight: 700;">Crear Cuenta</a>
+          `;
+        }
+      }
+    }
+
+    renderizarNavegacion();
+    cargarPlanes();
+  </script>
+</body>
+</html>
