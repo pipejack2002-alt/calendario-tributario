@@ -2,7 +2,7 @@ name: Enviar Alertas Tributarias Diarias
 
 on:
   schedule:
-    - cron: '0 8 * * *'
+    - cron: '0 8 * * *' # Runs at 08:00
   workflow_dispatch:
 
 jobs:
@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Llamar a la Edge Function de Supabase
-        run: |
-          curl -X POST https://lehtlxevhzhxohhvjfsf.supabase.co/functions/v1/super-handler \
-          -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
-          -H "Content-Type: application/json" \
+        run: >-
+          curl -X POST https://lehtlxevhzhxohhvjfsf.supabase.co/functions/v1/super-handler
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}"
+          -H "Content-Type: application/json"
           -d "{}"
