@@ -602,6 +602,7 @@
     let filtroEstadoActual = "todos";
     let misNitsLista = [];
     let sesionUsuario = null;
+    let perfilUsuario = null;
 
     // Elementos del DOM
     const form = document.getElementById('form-consulta');
@@ -865,7 +866,7 @@
     }
 
     // ==========================================
-    // LÓGICA DE GESTIÓN COMPLETA DE NITS (CRUD)
+    // LÓGICA DE GESTIÓN COMPLETA DE NITS (CRUD) + FREEMIUM
     // ==========================================
 
     async function inicializarAlertas() {
@@ -874,10 +875,30 @@
       
       sesionUsuario = session;
 
+      // Obtener el perfil completo del usuario (plan y rol)
+      try {
+        const { data: perfil } = await supabaseClient
+          .from('perfiles')
+          .select('plan, rol')
+          .eq('id', session.user.id)
+          .single();
+        
+        perfilUsuario = perfil;
+      } catch (e) {
+        console.log("No se pudo obtener el perfil del usuario:", e);
+      }
+
       // Mostrar el correo de la cuenta en el badge de monitoreo
       const spanCorreo = document.getElementById('correo-usuario-monitoreo');
       if (spanCorreo && session.user && session.user.email) {
         spanCorreo.textContent = session.user.email;
+      }
+
+      // Mostrar badge de Plan Actual
+      const badgeTotal = document.getElementById('badge-total-nits');
+      const planActual = perfilUsuario?.plan || 'basico';
+      if (planActual === 'basico' && badgeTotal) {
+        badgeTotal.innerHTML = `<span style="color: #d97706; background: #fef3c7; border: 1px solid #fde68a; padding: 2px 8px; border-radius: 10px;">Plan Gratuito</span>`;
       }
 
       // Event Listeners para Guardar y Cancelar Edición
@@ -912,13 +933,22 @@
       const badgeTotal = document.getElementById('badge-total-nits');
       tbody.innerHTML = '';
 
-      badgeTotal.textContent = `${misNitsLista.length} NIT(s) registrado(s)`;
+      const planActual = perfilUsuario?.plan || 'basico';
+      const esDePago = planActual === 'profesional' || planActual === 'empresarial' || perfilUsuario?.rol === 'admin';
+
+      if (esDePago && badgeTotal) {
+        badgeTotal.textContent = `${misNitsLista.length} NIT(s) en monitoreo (${planActual.toUpperCase()})`;
+      } else if (badgeTotal) {
+        badgeTotal.innerHTML = `<span style="color: #d97706; background: #fef3c7; border: 1px solid #fde68a; padding: 2px 8px; border-radius: 10px;">Plan Gratuito</span>`;
+      }
 
       if (misNitsLista.length === 0) {
         tbody.innerHTML = `
           <tr>
             <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 1.25rem;">
-              No has registrado ningún NIT aún. Agrega uno arriba para activar tus alertas.
+              ${esDePago 
+                ? 'No has registrado ningún NIT aún. Agrega uno arriba para activar tus alertas por correo.' 
+                : '🔒 Las alertas automáticas por correo están disponibles en los planes <strong>Profesional y Empresarial</strong>. Conoce nuestros planes para activarlas.'}
             </td>
           </tr>
         `;
@@ -950,6 +980,21 @@
 
     async function guardarOActualizarNit() {
       if (!sesionUsuario) return;
+
+      // RESTRICCIÓN FREEMIUM: Verificar si el usuario tiene plan básico
+      const planActual = perfilUsuario?.plan || 'basico';
+      const esDePago = planActual === 'profesional' || planActual === 'empresarial' || perfilUsuario?.rol === 'admin';
+
+      if (!esDePago) {
+        const confirmarUpgrade = confirm(
+          "⭐ Las Alertas Automáticas Diarias por Correo están disponibles en los planes PROFESIONAL y EMPRESARIAL.\n\n" +
+          "¿Deseas conocer nuestros planes para activar tus notificaciones automáticas?"
+        );
+        if (confirmarUpgrade) {
+          window.location.href = 'precios.html';
+        }
+        return;
+      }
 
       const idEditar = document.getElementById('nit-id-editar').value;
       const nit = document.getElementById('nit-seguimiento').value.trim();
@@ -997,7 +1042,7 @@
             ]);
 
           if (error) throw error;
-          alert(`¡NIT ${nit} guardado correctamente!`);
+          alert(`¡NIT ${nit} guardado correctamente! Recibirás alertas automáticas.`);
         }
 
         limpiarFormularioNit();

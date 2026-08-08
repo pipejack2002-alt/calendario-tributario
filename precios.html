@@ -641,7 +641,7 @@
       
       <!-- Input de Búsqueda Rápida -->
       <div class="faq-search-box">
-        <input type="text" id="faq-search" class="faq-search-input" placeholder="Busca una duda (ej. DIAN, celular, dispositivos, Power BI)...">
+        <input type="text" id="faq-search" class="faq-search-input" placeholder="Busca una duda (ej. DIAN, celular, alertas, Power BI)...">
       </div>
 
       <div id="faq-list">
@@ -652,6 +652,10 @@
         <div class="faq-item" data-keywords="celular movil smartphone app web optimizada computadores tablets">
           <div class="faq-question">¿Puedo usar la plataforma desde mi celular?</div>
           <div class="faq-answer">Por supuesto. La aplicación web está 100% optimizada para funcionar rápido en smartphones, tablets y computadores.</div>
+        </div>
+        <div class="faq-item" data-keywords="alertas correo notificaciones automaticas diarias nit vencimientos">
+          <div class="faq-question">¿Qué planes incluyen las Alertas Automáticas por Correo?</div>
+          <div class="faq-answer">Las notificaciones automáticas diarias por correo electrónico están disponibles en el <strong>Plan Profesional</strong> y el <strong>Plan Empresarial</strong>.</div>
         </div>
         <div class="faq-item" data-keywords="ayuda plan requerimiento corporativo whatsapp asesoramiento">
           <div class="faq-question">¿Necesitas ayuda para elegir un plan o requerimiento corporativo?</div>
@@ -682,7 +686,7 @@
         
         <!-- Testimonio 1 -->
         <div class="testimonial-card">
-          <p style="color: var(--text-muted); font-style: italic; font-size: 0.925rem; margin-bottom: 1.25rem;">"TributoApp me salvó de una sanción por extemporaneidad el mes pasado. La interfaz es intuitiva y las alertas llegan a tiempo."</p>
+          <p style="color: var(--text-muted); font-style: italic; font-size: 0.925rem; margin-bottom: 1.25rem;">"TributoApp me salvó de una sanción por extemporaneidad el mes pasado. La interfaz es intuitiva y las alertas por correo llegan siempre a tiempo."</p>
           <div style="font-weight: 800; color: var(--primary-blue);">Carlos M.</div>
           <div style="font-size: 0.825rem; color: var(--text-muted);">Contador Público</div>
         </div>
@@ -926,23 +930,24 @@
       if (n.includes('básico') || n.includes('basico')) {
         return `
           <li>1 dispositivo activo</li>
-          <li>Consulta de calendario tributario nacional</li>
+          <li>Consulta ilimitada del calendario web</li>
           <li>Filtros dinámicos por NIT e impuesto</li>
           <li>Soporte técnico directo</li>
         `;
       } else if (n.includes('profesional')) {
         return `
           <li>5 dispositivos activos</li>
-          <li>Alertas automáticas de vencimiento</li>
-          <li>Consulta de calendario tributario nacional</li>
+          <li><strong>Alertas automáticas por correo</strong></li>
+          <li>Consulta ilimitada del calendario web</li>
           <li>Filtros dinámicos por NIT e impuesto</li>
+          <li>Soporte técnico directo</li>
         `;
       } else if (n.includes('empresarial')) {
         return `
           <li>15 dispositivos activos</li>
-          <li>Alertas automáticas de vencimiento</li>
+          <li><strong>Alertas automáticas por correo</strong></li>
           <li>Plantillas Power BI de conciliación incluidas</li>
-          <li>Soporte técnico prioritario</li>
+          <li>Gestión corporativa y soporte prioritario</li>
         `;
       }
       return `
@@ -1004,7 +1009,8 @@
               </div>
               <ul class="plan-features">
                 <li>1 dispositivo activo</li>
-                <li>Consulta de calendario tributario</li>
+                <li>Consulta ilimitada del calendario web</li>
+                <li>Filtros dinámicos por NIT e impuesto</li>
                 <li>Soporte técnico directo</li>
               </ul>
             </div>
@@ -1022,8 +1028,9 @@
               </div>
               <ul class="plan-features">
                 <li>5 dispositivos activos</li>
-                <li>Alertas automáticas</li>
-                <li>Consulta de calendario tributario</li>
+                <li><strong>Alertas automáticas por correo</strong></li>
+                <li>Consulta ilimitada del calendario web</li>
+                <li>Soporte técnico directo</li>
               </ul>
             </div>
             <button class="btn-plan btn-accent" onclick="seleccionarPlan('pro', 'Profesional', 24900)">Elegir Plan</button>
@@ -1039,8 +1046,9 @@
               </div>
               <ul class="plan-features">
                 <li>15 dispositivos activos</li>
-                <li>Alertas automáticas</li>
+                <li><strong>Alertas automáticas por correo</strong></li>
                 <li>Plantillas Power BI incluidas</li>
+                <li>Soporte prioritario</li>
               </ul>
             </div>
             <button class="btn-plan" onclick="seleccionarPlan('empresarial', 'Empresarial', 39900)">Elegir Plan</button>

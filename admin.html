@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel de Administración - Calendario Tributario Colombia</title>
-  
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración - TributoApp S.A.S.</title>
+
   <!-- Favicon e Identidad de Pestaña -->
   <link rel="icon" type="image/png" href="assets/img/favicon.png">
 
@@ -96,7 +96,7 @@
 
     /* --- CONTENEDOR PRINCIPAL --- */
     .container {
-      max-width: 900px;
+      max-width: 1100px;
       width: 90%;
       margin: 2rem auto;
       flex: 1;
@@ -132,6 +132,11 @@
       font-weight: 700;
       color: var(--primary-blue);
       margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
     }
 
     .form-grid {
@@ -181,6 +186,19 @@
       background: #141d3f;
     }
 
+    .btn-action-save {
+      background: #10b981;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .btn-action-save:hover {
+      background: #059669;
+    }
+
     .btn-danger {
       background: var(--danger);
     }
@@ -197,7 +215,64 @@
       color: var(--primary-blue);
     }
 
-    #mensaje-form, #mensaje-csv, #mensaje-eliminar {
+    /* Tablas en Admin */
+    .table-container {
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      margin-top: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.875rem;
+    }
+
+    th {
+      background-color: #f1f5f9;
+      color: var(--primary-blue);
+      font-weight: 700;
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+      background-color: #ffffff;
+      vertical-align: middle;
+    }
+
+    .badge-plan {
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      display: inline-block;
+    }
+
+    .badge-plan-basico {
+      background: #fef3c7;
+      color: #d97706;
+      border: 1px solid #fde68a;
+    }
+
+    .badge-plan-profesional {
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+    }
+
+    .badge-plan-empresarial {
+      background: #d1fae5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+    }
+
+    #mensaje-form, #mensaje-csv, #mensaje-eliminar, #mensaje-usuarios {
       margin-top: 0.75rem;
       font-size: 0.9rem;
       font-weight: 600;
@@ -252,10 +327,74 @@
   <div class="container">
     <div class="page-header">
       <h1>Panel de Administración</h1>
-      <p>Gestión y actualización centralizada de obligaciones tributarias.</p>
+      <p>Gestión de usuarios, activación de planes y control centralizado del calendario tributario.</p>
     </div>
 
-    <!-- 1. Formulario para agregar una sola obligación -->
+    <!-- 1. GESTIÓN DE USUARIOS Y SUSCRIPCIONES -->
+    <div class="card">
+      <div class="card-title">
+        <span>👥 Usuarios y Actividades de Suscripción</span>
+        <span id="badge-total-usuarios" style="font-size: 0.8rem; background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 10px;">0 usuarios</span>
+      </div>
+      <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:1rem;">
+        Cambia el plan o el rol de cualquier usuario. Las modificaciones surten efecto de forma inmediata en su Dashboard.
+      </p>
+
+      <div style="margin-bottom: 1rem;">
+        <input type="text" id="buscar-usuario" placeholder="Buscar por correo electrónico..." style="margin-bottom: 0; max-width: 350px;">
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Correo / Usuario</th>
+              <th>Plan Actual</th>
+              <th>Cambiar Plan</th>
+              <th>Rol</th>
+              <th style="text-align: center;">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-usuarios">
+            <tr>
+              <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 1.25rem;">Cargando lista de usuarios...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p id="mensaje-usuarios"></p>
+    </div>
+
+    <!-- 2. SUPERVISIÓN DE NITS MONITOREADOS -->
+    <div class="card">
+      <div class="card-title">
+        <span>🔔 NITs Registrados para Alertas</span>
+        <span id="badge-total-nits-admin" style="font-size: 0.8rem; background: #fef3c7; color: #d97706; padding: 4px 10px; border-radius: 10px;">0 NITs</span>
+      </div>
+      <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:1rem;">
+        Revisa los NITs que los usuarios han guardado en la plataforma para recibir notificaciones automáticas.
+      </p>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Correo Usuario</th>
+              <th>NIT Guardado</th>
+              <th>Último Dígito</th>
+              <th>Tipo Contribuyente</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-nits-admin">
+            <tr>
+              <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 1.25rem;">Cargando NITs registrados...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 3. Formulario para agregar una sola obligación -->
     <div class="card">
       <div class="card-title">Agregar una obligación puntual</div>
       <form id="form-obligacion">
@@ -300,7 +439,7 @@
           </div>
           <div>
             <label>Año gravable</label>
-            <input type="number" id="f-anio" placeholder="Ej: 2027" required>
+            <input type="number" id="f-anio" placeholder="Ej: 2026" required>
           </div>
         </div>
         <button type="submit">Guardar obligación</button>
@@ -308,7 +447,7 @@
       <p id="mensaje-form"></p>
     </div>
 
-    <!-- 2. Carga Masiva por CSV con Batching -->
+    <!-- 4. Carga Masiva por CSV -->
     <div class="card">
       <div class="card-title">Cargar el calendario completo de un nuevo año (CSV)</div>
       <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:1rem;">
@@ -322,14 +461,14 @@
       <p id="mensaje-csv"></p>
     </div>
 
-    <!-- 3. Limpieza / Sobrescritura de un Año Gravable -->
+    <!-- 5. Limpieza / Sobrescritura de un Año Gravable -->
     <div class="card" style="border-left: 4px solid var(--danger);">
       <div class="card-title" style="color: var(--danger-hover);">Limpiar / Eliminar datos de un año gravable</div>
       <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:1rem;">
         Si necesitas resubir un año completo por corregir un error, elimina primero los registros de ese año para evitar duplicados.
       </p>
       <div style="display:flex; gap:1rem; align-items:center; max-width:450px; flex-wrap:wrap;">
-        <input type="number" id="input-anio-eliminar" placeholder="Ej: 2027" style="margin:0; flex:1;">
+        <input type="number" id="input-anio-eliminar" placeholder="Ej: 2026" style="margin:0; flex:1;">
         <button id="btn-eliminar-anio" class="btn-danger" style="white-space:nowrap;">Eliminar Año</button>
       </div>
       <p id="mensaje-eliminar"></p>
@@ -340,7 +479,7 @@
   <footer>
     <div class="footer-container">
       <div>
-        <strong>Calendario Tributario Colombia</strong>
+        <strong>TributoApp S.A.S.</strong>
         <p style="font-size:0.85rem; color:#94a3b8; margin-top:0.25rem;">Panel de control administrativo.</p>
       </div>
       <div>
@@ -350,7 +489,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      &copy; 2026 Calendario Tributario Colombia. Todos los derechos reservados.
+      &copy; 2026 TributoApp S.A.S. Todos los derechos reservados.
     </div>
   </footer>
 
@@ -360,10 +499,12 @@
   <script src="supabaseClient.js"></script>
   <script src="verificarSesion.js"></script>
   <script>
+    let usuariosLista = [];
+
     // 1. Validar permisos exclusivos de Administrador al entrar
     (async () => {
       const { data: { session } } = await supabaseClient.auth.getSession();
-      if (!session) return; // verificarSesion.js se encarga de redirigir si no hay sesión
+      if (!session) return;
 
       const { data: perfil, error } = await supabaseClient
         .from('perfiles')
@@ -374,10 +515,14 @@
       if (error || !perfil || perfil.rol !== 'admin') {
         alert("No tienes permisos de administrador.");
         window.location.href = "dashboard.html";
+        return;
       }
+
+      await cargarUsuariosAdmin();
+      await cargarNitsAdmin();
     })();
 
-    // Renderizar opción de Cerrar Sesión en la Navegación de forma dinámica
+    // Renderizar opción de Cerrar Sesión en la Navegación
     async function renderizarNavegacionAdmin() {
       try {
         const { data: { session } } = await supabaseClient.auth.getSession();
@@ -399,7 +544,150 @@
     }
     renderizarNavegacionAdmin();
 
-    // 2. Guardar una sola obligación
+    // 2. MÓDULO: Cargar y administrar usuarios
+    async function cargarUsuariosAdmin() {
+      const tbody = document.getElementById('tabla-usuarios');
+      const badgeTotal = document.getElementById('badge-total-usuarios');
+
+      try {
+        const { data, error } = await supabaseClient
+          .from('perfiles')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        usuariosLista = data || [];
+        badgeTotal.textContent = `${usuariosLista.length} usuario(s)`;
+        renderizarTablaUsuarios(usuariosLista);
+
+      } catch (err) {
+        console.error("Error al cargar usuarios:", err);
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--danger);">Error al obtener usuarios: ${err.message}</td></tr>`;
+      }
+    }
+
+    function renderizarTablaUsuarios(lista) {
+      const tbody = document.getElementById('tabla-usuarios');
+      tbody.innerHTML = '';
+
+      if (lista.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:1rem;">No se encontraron usuarios.</td></tr>`;
+        return;
+      }
+
+      lista.forEach(user => {
+        const tr = document.createElement('tr');
+        const planActual = user.plan || 'basico';
+        const rolActual = user.rol || 'usuario';
+
+        let badgeClass = 'badge-plan-basico';
+        if (planActual === 'profesional') badgeClass = 'badge-plan-profesional';
+        if (planActual === 'empresarial') badgeClass = 'badge-plan-empresarial';
+
+        tr.innerHTML = `
+          <td style="font-weight: 600; color: var(--primary-blue);">${user.email || user.id}</td>
+          <td><span class="badge-plan ${badgeClass}">${planActual}</span></td>
+          <td>
+            <select id="select-plan-${user.id}" style="margin:0; padding:4px 8px; font-size:0.825rem;">
+              <option value="basico" ${planActual === 'basico' ? 'selected' : ''}>Básico (Gratis)</option>
+              <option value="profesional" ${planActual === 'profesional' ? 'selected' : ''}>Profesional</option>
+              <option value="empresarial" ${planActual === 'empresarial' ? 'selected' : ''}>Empresarial</option>
+            </select>
+          </td>
+          <td>
+            <select id="select-rol-${user.id}" style="margin:0; padding:4px 8px; font-size:0.825rem;">
+              <option value="usuario" ${rolActual === 'usuario' ? 'selected' : ''}>Usuario</option>
+              <option value="admin" ${rolActual === 'admin' ? 'selected' : ''}>Admin</option>
+            </select>
+          </td>
+          <td style="text-align: center;">
+            <button class="btn-action-save" onclick="guardarCambiosUsuario('${user.id}')">Guardar</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Buscador en tiempo real de usuarios
+    document.getElementById('buscar-usuario').addEventListener('input', (e) => {
+      const termino = e.target.value.toLowerCase().trim();
+      const filtrados = usuariosLista.filter(u => 
+        (u.email && u.email.toLowerCase().includes(termino)) || 
+        (u.plan && u.plan.toLowerCase().includes(termino))
+      );
+      renderizarTablaUsuarios(filtrados);
+    });
+
+    async function guardarCambiosUsuario(userId) {
+      const nuevoPlan = document.getElementById(`select-plan-${userId}`).value;
+      const nuevoRol = document.getElementById(`select-rol-${userId}`).value;
+      const mensaje = document.getElementById('mensaje-usuarios');
+
+      mensaje.style.color = "var(--primary-blue)";
+      mensaje.textContent = "Actualizando usuario...";
+
+      try {
+        const { error } = await supabaseClient
+          .from('perfiles')
+          .update({ plan: nuevoPlan, rol: nuevoRol })
+          .eq('id', userId);
+
+        if (error) throw error;
+
+        mensaje.style.color = "var(--accent-green)";
+        mensaje.textContent = "¡Usuario actualizado con éxito!";
+        await cargarUsuariosAdmin();
+
+        setTimeout(() => { mensaje.textContent = ""; }, 3000);
+
+      } catch (err) {
+        console.error("Error al actualizar usuario:", err);
+        mensaje.style.color = "var(--danger)";
+        mensaje.textContent = "Error al actualizar: " + err.message;
+      }
+    }
+
+    // 3. MÓDULO: Supervisar NITs Monitoreados
+    async function cargarNitsAdmin() {
+      const tbody = document.getElementById('tabla-nits-admin');
+      const badgeTotal = document.getElementById('badge-total-nits-admin');
+
+      try {
+        const { data, error } = await supabaseClient
+          .from('mis_nits')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        const lista = data || [];
+        badgeTotal.textContent = `${lista.length} NIT(s)`;
+        tbody.innerHTML = '';
+
+        if (lista.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:1rem;">No hay NITs registrados aún.</td></tr>`;
+          return;
+        }
+
+        lista.forEach(item => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td style="color: var(--text-muted);">${item.email || item.user_id}</td>
+            <td style="font-weight: 700; color: var(--primary-blue);">${item.nit}</td>
+            <td><strong>${item.ultimo_digito}</strong></td>
+            <td>${item.tipo_contribuyente}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+      } catch (err) {
+        console.error("Error al cargar mis_nits admin:", err);
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--danger);">Error al cargar NITs.</td></tr>`;
+      }
+    }
+
+    // 4. Guardar una sola obligación
     document.getElementById('form-obligacion').addEventListener('submit', async (e) => {
       e.preventDefault();
       const mensaje = document.getElementById('mensaje-form');
@@ -429,7 +717,7 @@
       }
     });
 
-    // 3. Importación masiva por lotes (Batching)
+    // 5. Importación masiva por lotes (Batching)
     document.getElementById('btn-importar').addEventListener('click', () => {
       const input = document.getElementById('input-csv');
       const mensaje = document.getElementById('mensaje-csv');
@@ -468,8 +756,8 @@
             const { error } = await supabaseClient.from('calendario_tributario').insert(lote);
             
             if (error) {
-                console.error(`Error insertando el lote ${i / TAMANO_LOTE + 1}:`, error);
-                errores++;
+              console.error(`Error insertando el lote ${i / TAMANO_LOTE + 1}:`, error);
+              errores++;
             }
           }
 
@@ -480,12 +768,12 @@
           } else {
             mensaje.style.color = "var(--danger)";
             mensaje.textContent = `Importación completada con ${errores} errores en lotes. Revisa la consola del navegador.`;
+          }
         }
-      }
+      });
     });
-  });
 
-    // 4. Limpieza de un año gravable específico
+    // 6. Limpieza de un año gravable específico
     document.getElementById('btn-eliminar-anio').addEventListener('click', async () => {
       const inputAnio = document.getElementById('input-anio-eliminar');
       const mensaje = document.getElementById('mensaje-eliminar');

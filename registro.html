@@ -287,7 +287,7 @@
     <div class="form-panel">
       <div class="form-header">
         <h1>Crear cuenta</h1>
-        <p>Completa los datos para activar tu acceso inmediato</p>
+        <p>Completa los datos para activar tu prueba gratuita de 3 días</p>
       </div>
 
       <form id="form-registro">
@@ -341,10 +341,16 @@
         return;
       }
 
+      // Calcular fecha fin de prueba (3 días exactos desde el registro)
+      const fechaPrueba = new Date();
+      fechaPrueba.setDate(fechaPrueba.getDate() + 3);
+
       const { error: perfilError } = await supabaseClient.from('perfiles').insert({
         id: data.user.id,
         email: email,
-        rol: 'usuario'
+        plan: 'basico',
+        rol: 'usuario',
+        fecha_fin_prueba: fechaPrueba.toISOString()
       });
 
       if (perfilError) {
@@ -356,7 +362,7 @@
       }
 
       mensaje.style.color = "#10b981";
-      mensaje.textContent = "¡Cuenta creada! Ya puedes iniciar sesión.";
+      mensaje.textContent = "¡Cuenta creada! Tienes 3 días de prueba gratuita. Ya puedes iniciar sesión.";
       btnRegistrarse.disabled = false;
       btnRegistrarse.style.opacity = "1";
       form.reset();
