@@ -15,10 +15,12 @@
   // Si es administrador, tiene acceso total sin restricciones
   if (perfil?.rol === 'admin') return;
 
-  const planActual = perfil?.plan || 'basico';
-  const esDePago = planActual === 'profesional' || planActual === 'empresarial';
+  const planActual = perfil?.plan || 'prueba';
+  
+  // Consideramos "De Pago" si tiene activo Plan Básico, Profesional o Empresarial
+  const esDePago = planActual === 'basico' || planActual === 'profesional' || planActual === 'empresarial';
 
-  // 2. CONTROL DE PRUEBA DE 3 DÍAS (Para Plan Básico / Gratuito)
+  // 2. CONTROL DE PRUEBA DE 3 DÍAS (Solo aplica si NO es un plan de pago)
   if (!esDePago) {
     const ahora = new Date();
     let fechaFin = perfil?.fecha_fin_prueba ? new Date(perfil.fecha_fin_prueba) : null;
@@ -38,7 +40,7 @@
   }
 
   // 3. CONTROL DE LÍMITES DE DISPOSITIVOS ACTIVOS
-  const LIMITES_DISPOSITIVOS = { basico: 1, profesional: 5, empresarial: 15 };
+  const LIMITES_DISPOSITIVOS = { prueba: 1, basico: 1, profesional: 5, empresarial: 15 };
   const limite = LIMITES_DISPOSITIVOS[planActual] || 1;
 
   let deviceId = localStorage.getItem('device_id');

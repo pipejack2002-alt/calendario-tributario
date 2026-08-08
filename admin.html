@@ -254,6 +254,12 @@
       display: inline-block;
     }
 
+    .badge-plan-prueba {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+    }
+
     .badge-plan-basico {
       background: #fef3c7;
       color: #d97706;
@@ -552,8 +558,7 @@
       try {
         const { data, error } = await supabaseClient
           .from('perfiles')
-          .select('*')
-          .order('created_at', { ascending: false });
+          .select('*');
 
         if (error) throw error;
 
@@ -578,10 +583,11 @@
 
       lista.forEach(user => {
         const tr = document.createElement('tr');
-        const planActual = user.plan || 'basico';
+        const planActual = user.plan || 'prueba';
         const rolActual = user.rol || 'usuario';
 
-        let badgeClass = 'badge-plan-basico';
+        let badgeClass = 'badge-plan-prueba';
+        if (planActual === 'basico') badgeClass = 'badge-plan-basico';
         if (planActual === 'profesional') badgeClass = 'badge-plan-profesional';
         if (planActual === 'empresarial') badgeClass = 'badge-plan-empresarial';
 
@@ -590,9 +596,10 @@
           <td><span class="badge-plan ${badgeClass}">${planActual}</span></td>
           <td>
             <select id="select-plan-${user.id}" style="margin:0; padding:4px 8px; font-size:0.825rem;">
-              <option value="basico" ${planActual === 'basico' ? 'selected' : ''}>Básico (Gratis)</option>
-              <option value="profesional" ${planActual === 'profesional' ? 'selected' : ''}>Profesional</option>
-              <option value="empresarial" ${planActual === 'empresarial' ? 'selected' : ''}>Empresarial</option>
+              <option value="prueba" ${planActual === 'prueba' ? 'selected' : ''}>Prueba Gratis / Vencido</option>
+              <option value="basico" ${planActual === 'basico' ? 'selected' : ''}>Plan Básico (De Pago)</option>
+              <option value="profesional" ${planActual === 'profesional' ? 'selected' : ''}>Plan Profesional (De Pago)</option>
+              <option value="empresarial" ${planActual === 'empresarial' ? 'selected' : ''}>Plan Empresarial (De Pago)</option>
             </select>
           </td>
           <td>
@@ -656,8 +663,7 @@
       try {
         const { data, error } = await supabaseClient
           .from('mis_nits')
-          .select('*')
-          .order('created_at', { ascending: false });
+          .select('*');
 
         if (error) throw error;
 
